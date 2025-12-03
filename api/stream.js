@@ -1,13 +1,8 @@
-// api/stream.js
-// Streaming endpoint for real-time responses
-
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Content-Type', 'text/plain');
     return res.status(200).end();
@@ -17,7 +12,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Set streaming headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -30,7 +24,6 @@ export default async function handler(req, res) {
       return res.end();
     }
 
-    // Call Anthropic with streaming
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -52,7 +45,6 @@ export default async function handler(req, res) {
       return res.end();
     }
 
-    // Stream the response back to client
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
