@@ -765,14 +765,41 @@
             userDiv.className = 'msg user';
             userDiv.innerHTML = `<div class="label">YOU</div><div class="text">${text}</div>`;
             msgs.appendChild(userDiv);
+            msgs.scrollTop = msgs.scrollHeight;
             
             inp.value = '';
             
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg ai';
             aiDiv.id = 'building';
-            aiDiv.innerHTML = `<div class="label">FEREN AI</div><div class="text">Building...</div>`;
+            aiDiv.innerHTML = `
+                <div class="label">FEREN AI</div>
+                <div class="text" id="buildStatus">
+                    <div style="margin-bottom:8px;">🔍 Analyzing your request...</div>
+                </div>
+            `;
             msgs.appendChild(aiDiv);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            const statusDiv = document.getElementById('buildStatus');
+            
+            // Update status: Planning
+            setTimeout(() => {
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">📋 Planning app structure...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 500);
+            
+            // Update status: Designing
+            setTimeout(() => {
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">🎨 Designing green-themed UI...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 1000);
+            
+            // Update status: Calling API
+            setTimeout(() => {
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">🤖 Generating code with Claude...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 1500);
             
             try {
                 const res = await fetch('/api/anthropic', {
@@ -782,25 +809,100 @@
                         apiKey: api,
                         messages: [{
                             role: 'user',
-                            content: `Create a complete HTML app: ${text}\n\nSingle file, GREEN theme, fully functional. Return ONLY HTML.`
+                            content: `Create a complete HTML app: ${text}\n\nSingle file, GREEN theme (#10b981, #059669), fully functional, modern design. Return ONLY HTML.`
                         }],
                         max_tokens: 4096
                     })
                 });
                 
+                // Update status: Processing
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">⚙️ Processing response...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+                
                 const data = await res.json();
                 let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
                 
-                appCode = code;
-                document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">✨ Done! Check preview →</div>`;
-                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
-                document.getElementById('dlApp').style.display = 'block';
+                // Update status: Validating
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">✅ Validating HTML code...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
                 
-                console.log('✅ App built!');
+                appCode = code;
+                
+                // Save to FerenAgent project
+                const agentProjectId = getOrCreateAgentProject();
+                const appId = 'app_' + Date.now();
+                
+                // Update status: Saving
+                statusDiv.innerHTML += `<div style="margin-bottom:8px;">💾 Saving to FerenAgent project...</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+                
+                artifactsData[appId] = {
+                    id: appId,
+                    type: 'html',
+                    title: text.substring(0, 40),
+                    content: code,
+                    chatId: null,
+                    projectId: agentProjectId,
+                    created: Date.now()
+                };
+                localStorage.setItem('artifacts', JSON.stringify(artifactsData));
+                
+                if (!projectsData[agentProjectId].apps) {
+                    projectsData[agentProjectId].apps = [];
+                }
+                projectsData[agentProjectId].apps.push(appId);
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                
+                updateAll();
+                
+                // Update status: Complete
+                setTimeout(() => {
+                    statusDiv.innerHTML += `<div style="margin-bottom:8px;">🎉 Rendering preview...</div>`;
+                    msgs.scrollTop = msgs.scrollHeight;
+                    
+                    setTimeout(() => {
+                        document.getElementById('building').innerHTML = `
+                            <div class="label">FEREN AI</div>
+                            <div class="text">
+                                <div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ App Built Successfully!</div>
+                                <div style="font-size:13px;color:#6b7280;">
+                                    • Saved to FerenAgent Apps project<br>
+                                    • Added to Artifacts section<br>
+                                    • Preview ready on the right →
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
+                        document.getElementById('dlApp').style.display = 'block';
+                        
+                        console.log('✅ App built and saved to project:', agentProjectId);
+                    }, 300);
+                }, 500);
+                
             } catch (e) {
                 console.error(e);
-                document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">Error: ${e.message}</div>`;
+                document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">❌ Error: ${e.message}</div>`;
             }
+        }
+        
+        function getOrCreateAgentProject() {
+            // Find or create "FerenAgent Apps" project
+            let agentProject = Object.values(projectsData).find(p => p.name === 'FerenAgent Apps');
+            
+            if (!agentProject) {
+                const id = 'p_ferenagent';
+                projectsData[id] = {
+                    id: id,
+                    name: 'FerenAgent Apps',
+                    created: Date.now(),
+                    apps: []
+                };
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                return id;
+            }
+            
+            return agentProject.id;
         }
         
         function showPreview() {
@@ -816,7 +918,7 @@
             document.getElementById('previewTab').classList.remove('active');
             if (appCode) {
                 const escaped = appCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                document.getElementById('preview').innerHTML = `<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow:auto;height:100%;white-space:pre-wrap;">${escaped}</div>`;
+                document.getElementById('preview').innerHTML = `<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow:auto;height:100%;white-space:pre-wrap;overflow-y:scroll;">${escaped}</div>`;
             }
         }
         
