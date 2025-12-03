@@ -8,561 +8,139 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; overflow: hidden; }
         .app { display: flex; height: 100vh; }
         
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #065f46, #064e3b);
-            color: white;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .logo {
-            font-family: 'Comfortaa', sans-serif;
-            font-size: 20px;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .section {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            margin-bottom: 8px;
-            opacity: 0.8;
-        }
-        
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: linear-gradient(180deg, #065f46, #064e3b); color: white; display: flex; flex-direction: column; }
+        .logo { font-family: 'Comfortaa', sans-serif; font-size: 20px; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .section { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .section-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; opacity: 0.8; }
         .section-btns { display: flex; gap: 4px; }
+        .section-btn { width: 22px; height: 22px; background: rgba(255,255,255,0.2); border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 11px; }
+        .section-btn:hover { background: rgba(255,255,255,0.3); }
         
-        .section-btn {
-            width: 22px;
-            height: 22px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
-        
-        .item {
-            padding: 8px;
-            margin: 2px 0;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
+        .item { padding: 8px; margin: 2px 0; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; position: relative; }
         .item:hover { background: rgba(255,255,255,0.15); }
-        .item.active { background: rgba(255,255,255,0.25); }
+        .item.active { background: rgba(255,255,255,0.25); font-weight: 600; }
+        .item-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dots { width: 24px; height: 24px; background: rgba(255,255,255,0.25); border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .dots:hover { background: rgba(255,255,255,0.4); }
         
-        .item-text {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .dots {
-            width: 24px;
-            height: 24px;
-            background: rgba(255,255,255,0.25);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .dropdown {
-            position: absolute;
-            right: 30px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 100;
-            min-width: 150px;
-        }
-        
+        .dropdown { position: absolute; right: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: none; z-index: 100; min-width: 150px; }
         .dropdown.show { display: block; }
-        
-        .drop-btn {
-            width: 100%;
-            padding: 10px 14px;
-            background: white;
-            border: none;
-            text-align: left;
-            cursor: pointer;
-            font-size: 13px;
-            color: #1f2937;
-            display: flex;
-            gap: 8px;
-        }
-        
+        .drop-btn { width: 100%; padding: 10px 14px; background: white; border: none; text-align: left; cursor: pointer; font-size: 13px; color: #1f2937; display: flex; gap: 8px; }
         .drop-btn:hover { background: #f3f4f6; }
         
-        .agent-btn {
-            margin: 16px;
-            padding: 12px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-        }
-        
+        .agent-btn { margin: 16px; padding: 12px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; font-weight: 600; cursor: pointer; text-align: center; }
         .agent-btn:hover { background: rgba(255,255,255,0.3); }
         .agent-btn.active { background: white; color: #065f46; }
         
-        .usage {
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.1);
-            margin: 0 16px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-        }
-        
+        .usage { padding: 12px 16px; background: rgba(255,255,255,0.1); margin: 0 16px 12px; border-radius: 8px; font-size: 11px; }
         .usage div { display: flex; justify-content: space-between; margin: 4px 0; }
+        .footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .settings { width: 100%; padding: 10px; background: rgba(255,255,255,0.15); border: none; border-radius: 8px; color: white; cursor: pointer; display: flex; gap: 8px; font-size: 13px; }
+        .settings:hover { background: rgba(255,255,255,0.25); }
         
-        .footer {
-            padding: 16px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .settings {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255,255,255,0.15);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            gap: 8px;
-        }
-        
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #f5f5dc;
-        }
-        
-        .header {
-            padding: 14px 20px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .model {
-            padding: 6px 12px;
-            background: #f0fdf4;
-            border: 1px solid #d1fae5;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            gap: 8px;
-            font-size: 13px;
-        }
-        
+        /* MAIN */
+        .main { flex: 1; display: flex; flex-direction: column; background: #f5f5dc; }
+        .header { padding: 14px 20px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; }
+        .model { padding: 6px 12px; background: #faf9f0; border: 1px solid #e8e6d8; border-radius: 8px; cursor: pointer; display: flex; gap: 8px; font-size: 13px; color: #065f46; }
+        .model:hover { border-color: #10b981; }
         .actions { display: flex; gap: 8px; }
+        .action { padding: 6px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; font-size: 12px; color: #6b7280; }
+        .action:hover { border-color: #10b981; color: #10b981; }
         
-        .action {
-            padding: 6px 12px;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-        }
+        .messages { flex: 1; overflow-y: auto; padding: 30px 20px; }
+        .msg { margin-bottom: 20px; max-width: 800px; }
+        .msg.user { background: white; padding: 14px 18px; border-radius: 12px; border-left: 3px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .msg.ai { background: #ecfdf5; padding: 14px 18px; border-radius: 12px; border-left: 3px solid #059669; }
+        .label { font-size: 10px; text-transform: uppercase; font-weight: 600; color: #10b981; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .text { font-size: 14px; line-height: 1.7; color: #1f2937; }
         
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 30px 20px;
-        }
-        
-        .msg {
-            margin-bottom: 20px;
-            max-width: 800px;
-        }
-        
-        .msg.user {
-            background: white;
-            padding: 14px 18px;
-            border-radius: 12px;
-            border-left: 3px solid #10b981;
-        }
-        
-        .msg.ai {
-            background: #ecfdf5;
-            padding: 14px 18px;
-            border-radius: 12px;
-            border-left: 3px solid #059669;
-        }
-        
-        .label {
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: #10b981;
-            margin-bottom: 6px;
-        }
-        
-        .text {
-            font-size: 14px;
-            line-height: 1.7;
-            color: #1f2937;
-        }
-        
-        .input-area {
-            padding: 20px;
-        }
-        
-        .input-box {
-            max-width: 850px;
-            margin: 0 auto;
-            background: white;
-            border: 2px solid #d1fae5;
-            border-radius: 12px;
-            padding: 14px;
-        }
-        
-        .input {
-            width: 100%;
-            min-height: 100px;
-            border: none;
-            font-size: 14px;
-            font-family: inherit;
-            resize: vertical;
-        }
-        
+        .input-area { padding: 20px; }
+        .input-box { max-width: 850px; margin: 0 auto; background: white; border: 2px solid #d1fae5; border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(16,185,129,0.1); }
+        .input { width: 100%; min-height: 100px; border: none; font-size: 14px; font-family: inherit; resize: vertical; }
         .input:focus { outline: none; }
-        
-        .input-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        .send {
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
+        .input-footer { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+        .send { padding: 8px 20px; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 14px; }
         .send:disabled { opacity: 0.5; }
         
-        .builder {
-            display: flex;
-            height: 100%;
-        }
+        /* BUILDER */
+        .builder { display: flex; height: 100%; }
+        .builder-chat { width: 400px; background: white; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; }
+        .builder-msgs { flex: 1; overflow-y: auto; padding: 20px; }
+        .builder-input { padding: 14px; border-top: 1px solid #e5e7eb; }
+        .upload-area { margin-bottom: 10px; padding: 10px; border: 2px dashed #d1fae5; border-radius: 6px; background: #f0fdf4; text-align: center; cursor: pointer; font-size: 11px; color: #059669; }
+        .upload-area:hover { border-color: #10b981; background: #ecfdf5; }
+        .builder-text { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; min-height: 70px; resize: vertical; font-family: inherit; }
+        .build-btn { margin-top: 8px; width: 100%; padding: 10px; background: #10b981; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; }
         
-        .builder-chat {
-            width: 400px;
-            background: white;
-            border-right: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .builder-msgs {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .builder-input {
-            padding: 14px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .image-upload-area {
-            margin-bottom: 12px;
-            padding: 12px;
-            border: 2px dashed #d1fae5;
-            border-radius: 8px;
-            background: #f0fdf4;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .image-upload-area:hover {
-            border-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .image-upload-area.has-image {
-            border-style: solid;
-            border-color: #10b981;
-        }
-
-        .upload-label {
-            font-size: 12px;
-            color: #059669;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .image-preview {
-            margin-top: 8px;
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .image-preview.show {
-            display: block;
-        }
-
-        .remove-image {
-            margin-top: 6px;
-            padding: 4px 10px;
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            border-radius: 4px;
-            color: #dc2626;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .progress-bar-container {
-            margin: 12px 0;
-            background: #f3f4f6;
-            border-radius: 8px;
-            height: 24px;
-            overflow: hidden;
-            position: relative;
-            display: none;
-        }
-
-        .progress-bar-container.show {
-            display: block;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .time-estimate {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 11px;
-            color: #6b7280;
-            font-weight: 600;
-        }
-        
-        .builder-text {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 13px;
-            min-height: 70px;
-            resize: vertical;
-            font-family: inherit;
-        }
-        
-        .build-btn {
-            margin-top: 8px;
-            width: 100%;
-            padding: 10px;
-            background: #10b981;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .preview {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .preview-header {
-            padding: 10px 16px;
-            background: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-        }
-        
+        .preview { flex: 1; display: flex; flex-direction: column; }
+        .preview-header { padding: 10px 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; }
         .tabs { display: flex; gap: 4px; }
+        .tab { padding: 6px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; cursor: pointer; color: #6b7280; }
+        .tab.active { background: #10b981; color: white; border-color: #10b981; }
+        .preview-body { flex: 1; background: white; }
+        .frame { width: 100%; height: 100%; border: none; }
         
-        .tab {
-            padding: 6px 12px;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            color: #6b7280;
-        }
-        
-        .tab.active {
-            background: #10b981;
-            color: white;
-        }
-        
-        .preview-body {
-            flex: 1;
-            background: white;
-        }
-        
-        .frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
+        /* MODAL */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
         .modal.show { display: flex; }
-        
-        .modal-box {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            max-width: 450px;
-            width: 90%;
-        }
-        
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #065f46;
-            margin-bottom: 16px;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-        
-        .modal-btns {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
+        .modal-box { background: white; padding: 24px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .modal-title { font-size: 18px; font-weight: 600; color: #065f46; margin-bottom: 16px; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; margin-bottom: 16px; }
+        .form-input:focus { outline: none; border-color: #10b981; }
+        .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
         .btn-primary { background: #10b981; color: white; }
         .btn-secondary { background: #f3f4f6; color: #6b7280; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 3px; }
     </style>
 </head>
 <body>
+    <!-- Model Modal -->
     <div id="modelModal" class="modal">
         <div class="modal-box">
-            <div class="modal-title">🤖 Select AI Model</div>
-            <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
-                <div onclick="selectModel('claude-sonnet-4-20250514', 'Claude Sonnet 4.5')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
-                    <div style="width: 32px; height: 32px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">C</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Sonnet 4.5</div>
-                        <div style="font-size: 11px; color: #6b7280;">Balanced speed & intelligence</div>
-                    </div>
+            <div class="modal-title">🤖 Select Model</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+                <div onclick="selectModel('claude-sonnet-4-20250514','Claude Sonnet 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width:32px;height:32px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;">C</div>
+                    <div><div style="font-weight:600;color:#065f46;">Claude Sonnet 4.5</div><div style="font-size:11px;color:#6b7280;">Balanced</div></div>
                 </div>
-                
-                <div onclick="selectModel('claude-opus-4-20250514', 'Claude Opus 4')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
-                    <div style="width: 32px; height: 32px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">O</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Opus 4</div>
-                        <div style="font-size: 11px; color: #6b7280;">Most powerful, best for complex tasks</div>
-                    </div>
+                <div onclick="selectModel('claude-opus-4-20250514','Claude Opus 4')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width:32px;height:32px;background:#7c3aed;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;">O</div>
+                    <div><div style="font-weight:600;color:#065f46;">Claude Opus 4</div><div style="font-size:11px;color:#6b7280;">Most powerful</div></div>
                 </div>
-                
-                <div onclick="selectModel('claude-haiku-4-20250514', 'Claude Haiku 4.5')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
-                    <div style="width: 32px; height: 32px; background: #06b6d4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">H</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Haiku 4.5</div>
-                        <div style="font-size: 11px; color: #6b7280;">Fastest & most affordable</div>
-                    </div>
+                <div onclick="selectModel('claude-haiku-4-20250514','Claude Haiku 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width:32px;height:32px;background:#06b6d4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;">H</div>
+                    <div><div style="font-weight:600;color:#065f46;">Claude Haiku 4.5</div><div style="font-size:11px;color:#6b7280;">Fastest</div></div>
                 </div>
             </div>
-            <div class="modal-btns">
-                <button class="btn btn-secondary" onclick="closeModal('model')">Close</button>
-            </div>
+            <div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('model')">Close</button></div>
         </div>
     </div>
 
+    <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">⚙️ Settings</div>
-            <input type="password" id="apiKey" class="form-input" placeholder="API Key">
+            <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">API Key</label>
+            <input type="password" id="apiKey" class="form-input" placeholder="sk-ant-...">
             <div class="modal-btns">
                 <button class="btn btn-secondary" onclick="closeModal('settings')">Cancel</button>
                 <button class="btn btn-primary" onclick="saveSettings()">Save</button>
             </div>
         </div>
     </div>
-    
+
+    <!-- Project Modal -->
     <div id="projectModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">📁 New Project</div>
-            <input type="text" id="projectName" class="form-input" placeholder="Project Name">
+            <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Project Name</label>
+            <input type="text" id="projectName" class="form-input" placeholder="My Project">
             <div class="modal-btns">
                 <button class="btn btn-secondary" onclick="closeModal('project')">Cancel</button>
                 <button class="btn btn-primary" onclick="createProject()">Create</button>
@@ -573,50 +151,31 @@
     <div class="app">
         <div class="sidebar">
             <div class="logo">🌿 FEREN.AI</div>
-            
             <div style="flex:1;overflow-y:auto;">
                 <div class="section">
-                    <div class="section-header">
-                        <span>Projects</span>
-                        <div class="section-btns">
-                            <button class="section-btn" onclick="openModal('project')">+</button>
-                        </div>
-                    </div>
+                    <div class="section-header"><span>Projects</span><div class="section-btns"><button class="section-btn" onclick="openModal('project')">+</button></div></div>
                     <div id="projects"></div>
                 </div>
-                
                 <div class="section">
-                    <div class="section-header">
-                        <span>Chats</span>
-                        <div class="section-btns">
-                            <button class="section-btn" onclick="newChat()">+</button>
-                        </div>
-                    </div>
+                    <div class="section-header"><span>Chats</span><div class="section-btns"><button class="section-btn" onclick="newChat()">+</button></div></div>
                     <div id="chats"></div>
                 </div>
-                
                 <div class="section">
                     <div class="section-header"><span>Artifacts</span></div>
                     <div id="artifacts"></div>
                 </div>
             </div>
-            
-            <button class="agent-btn" id="agentBtn" onclick="openAgent()">
-                🤖 FerenAgent
-            </button>
-            
+            <button class="agent-btn" id="agentBtn" onclick="openAgent()">🤖 FerenAgent</button>
             <div class="usage">
                 <div><span>Tokens</span><span id="tokens">0</span></div>
                 <div><span>Calls</span><span id="calls">0</span></div>
                 <div><span>Cost</span><span id="cost">$0.00</span></div>
             </div>
-            
-            <div class="footer">
-                <button class="settings" onclick="openModal('settings')">⚙️ Settings</button>
-            </div>
+            <div class="footer"><button class="settings" onclick="openModal('settings')">⚙️ Settings</button></div>
         </div>
         
         <div class="main">
+            <!-- CHAT VIEW -->
             <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
                 <div class="header">
                     <div class="model" onclick="openModal('model')">
@@ -625,7 +184,7 @@
                         <span style="font-size:10px;">▼</span>
                     </div>
                     <div class="actions">
-                        <button class="action" onclick="alert('Share link copied!')">🔗 Share</button>
+                        <button class="action" onclick="shareChat()">🔗 Share</button>
                         <button class="action" onclick="dlChat()">📥 Download</button>
                     </div>
                 </div>
@@ -641,37 +200,31 @@
                 </div>
             </div>
             
+            <!-- BUILDER VIEW -->
             <div id="builderView" class="builder" style="display:none;">
                 <div class="builder-chat">
                     <div class="builder-msgs" id="builderMsgs"></div>
                     <div class="builder-input">
-                        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
-                            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-                            <div class="upload-label">
-                                <span>📷</span>
-                                <span id="uploadText">Upload image (screenshot, mockup, error)</span>
-                            </div>
-                            <img id="imagePreview" class="image-preview">
-                            <button id="removeImg" class="remove-image" onclick="event.stopPropagation(); removeImage()" style="display:none;">✕ Remove</button>
+                        <div class="upload-area" onclick="document.getElementById('imgInput').click()">
+                            <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleImg(event)">
+                            <span id="imgText">📷 Upload image (screenshot, mockup, error)</span>
                         </div>
-                        <textarea id="builderInp" class="builder-text" placeholder="Describe app or upload screenshot to improve..."></textarea>
+                        <textarea id="builderInp" class="builder-text" placeholder="Describe app or upload screenshot..."></textarea>
                         <button class="build-btn" onclick="buildApp()">Build App</button>
                     </div>
                 </div>
                 <div class="preview">
                     <div class="preview-header">
                         <div class="tabs">
-                            <button class="tab active" id="previewTab" onclick="showPreview()">👁️ Preview</button>
+                            <button class="tab active" id="prevTab" onclick="showPreview()">👁️ Preview</button>
                             <button class="tab" id="codeTab" onclick="showCode()">💻 Code</button>
                         </div>
                         <button class="action" id="dlApp" onclick="dlApp()" style="display:none;">📥 Download</button>
                     </div>
                     <div class="preview-body" id="preview">
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;">
-                            <div style="text-align:center;">
-                                <div style="font-size:48px;margin-bottom:12px;">🌿</div>
-                                <div>Describe an app to start</div>
-                            </div>
+                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;flex-direction:column;">
+                            <div style="font-size:48px;margin-bottom:12px;">🌿</div>
+                            <div>Describe an app to start</div>
                         </div>
                     </div>
                 </div>
@@ -680,41 +233,33 @@
     </div>
 
     <script>
+        // GLOBAL STATE
         let api = localStorage.getItem('api') || '';
         let chatsData = JSON.parse(localStorage.getItem('chats') || '{}');
         let projectsData = JSON.parse(localStorage.getItem('projects') || '{}');
         let artifactsData = JSON.parse(localStorage.getItem('artifacts') || '{}');
         let usage = JSON.parse(localStorage.getItem('usage') || '{"tokens":0,"calls":0,"cost":0}');
         let currentChatId = null;
+        let currentProj = null;
         let appCode = '';
-        let uploadedImage = null;
-        let uploadedImageData = null;
-        let builderContext = []; // Conversation history for iterations
-        let currentAppDescription = ''; // Track what we're building
+        let uploadedImg = null;
+        let model = localStorage.getItem('selectedModel') || 'claude-sonnet-4-20250514';
+        let modelName = localStorage.getItem('selectedModelName') || 'Claude Sonnet 4.5';
         
-        init();
+        // INIT
+        mermaid.initialize({ startOnLoad: false });
+        updateAll();
+        if (api) newChat();
+        else openModal('settings');
         
-        function init() {
-            mermaid.initialize({ startOnLoad: false });
-            
-            // Load saved model preference
-            const savedModel = localStorage.getItem('selectedModel');
-            const savedModelName = localStorage.getItem('selectedModelName');
-            if (savedModel) {
-                selectedModel = savedModel;
-                selectedModelName = savedModelName;
-                document.getElementById('modelName').textContent = savedModelName;
-            }
-            
-            updateAll();
-            if (!api) openModal('settings');
-            else newChat();
-        }
+        // Update model name on load
+        document.getElementById('modelName').textContent = modelName;
         
+        // FUNCTIONS
         function updateAll() {
-            updateProjects();
-            updateChats();
-            updateArtifacts();
+            loadProjects();
+            loadChats();
+            loadArtifacts();
             document.getElementById('tokens').textContent = usage.tokens;
             document.getElementById('calls').textContent = usage.calls;
             document.getElementById('cost').textContent = '$' + usage.cost.toFixed(4);
@@ -733,36 +278,46 @@
             if (api) {
                 localStorage.setItem('api', api);
                 closeModal('settings');
+                if (Object.keys(chatsData).length === 0) newChat();
             }
+        }
+        
+        function selectModel(modelId, name) {
+            model = modelId;
+            modelName = name;
+            document.getElementById('modelName').textContent = name;
+            localStorage.setItem('selectedModel', modelId);
+            localStorage.setItem('selectedModelName', name);
+            closeModal('model');
         }
         
         function createProject() {
             const name = document.getElementById('projectName').value.trim();
             if (name) {
                 const id = 'p' + Date.now();
-                projectsData[id] = { id, name, created: Date.now() };
+                projectsData[id] = { id, name, created: Date.now(), apps: [] };
                 localStorage.setItem('projects', JSON.stringify(projectsData));
                 updateAll();
                 closeModal('project');
             }
         }
         
-        function updateProjects() {
+        function loadProjects() {
             const html = Object.values(projectsData).slice(0,5).map(p => `
-                <div class="item" onclick="selectProject('${p.id}')">
+                <div class="item">
                     <span>📁</span>
                     <span class="item-text">${p.name}</span>
                     <button class="dots" onclick="event.stopPropagation();showDrop('p${p.id}')">⋮</button>
                     <div class="dropdown" id="dp${p.id}">
-                        <button class="drop-btn" onclick="editProject('${p.id}')">✏️ Edit</button>
-                        <button class="drop-btn" onclick="delProject('${p.id}')">🗑️ Delete</button>
+                        <button class="drop-btn" onclick="editProj('${p.id}')">✏️ Edit</button>
+                        <button class="drop-btn" onclick="delProj('${p.id}')">🗑️ Delete</button>
                     </div>
                 </div>
             `).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No projects</div>';
             document.getElementById('projects').innerHTML = html;
         }
         
-        function updateChats() {
+        function loadChats() {
             const html = Object.values(chatsData).slice(0,10).map(c => `
                 <div class="item ${currentChatId===c.id?'active':''}" onclick="loadChat('${c.id}')">
                     <span>💬</span>
@@ -777,16 +332,17 @@
             document.getElementById('chats').innerHTML = html;
         }
         
-        function updateArtifacts() {
+        function loadArtifacts() {
             const html = Object.values(artifactsData).slice(0,10).map(a => {
                 const icon = a.type==='html'?'📱':'💻';
                 return `
-                    <div class="item" onclick="goToArt('${a.id}')">
+                    <div class="item" onclick="openArtInBuilder('${a.id}')">
                         <span>${icon}</span>
                         <span class="item-text">${a.title}</span>
                         <button class="dots" onclick="event.stopPropagation();showDrop('a${a.id}')">⋮</button>
                         <div class="dropdown" id="da${a.id}">
-                            <button class="drop-btn" onclick="goToArt('${a.id}')">💬 Go to Chat</button>
+                            <button class="drop-btn" onclick="openArtInBuilder('${a.id}')">👁️ Open</button>
+                            <button class="drop-btn" onclick="dlArt('${a.id}')">📥 Download</button>
                             <button class="drop-btn" onclick="delArt('${a.id}')">🗑️ Delete</button>
                         </div>
                     </div>
@@ -822,7 +378,9 @@
             
             const msgs = document.getElementById('msgs');
             msgs.innerHTML = '';
-            (chatsData[id].msgs || []).forEach(m => addMsg(m.role, m.content, false));
+            if (chatsData[id]?.msgs) {
+                chatsData[id].msgs.forEach(m => addMsg(m.role, m.content, false));
+            }
             updateAll();
         }
         
@@ -830,10 +388,7 @@
             const msgs = document.getElementById('msgs');
             const div = document.createElement('div');
             div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-            div.innerHTML = `
-                <div class="label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div>
-                <div class="text">${content}</div>
-            `;
+            div.innerHTML = `<div class="label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div><div class="text">${content}</div>`;
             msgs.appendChild(div);
             msgs.scrollTop = msgs.scrollHeight;
             
@@ -857,6 +412,7 @@
             
             const btn = document.getElementById('sendBtn');
             btn.disabled = true;
+            btn.textContent = '...';
             
             try {
                 const res = await fetch('/api/anthropic', {
@@ -864,7 +420,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: api,
-                        model: selectedModel,
+                        model: model,
                         messages: [{ role: 'user', content: text }],
                         max_tokens: 2048
                     })
@@ -887,6 +443,7 @@
             }
             
             btn.disabled = false;
+            btn.textContent = 'Send';
         }
         
         function openAgent() {
@@ -895,108 +452,62 @@
             document.getElementById('agentBtn').classList.add('active');
         }
         
-        async function buildApp() {
-            console.log('buildApp function called!');
+        function openArtInBuilder(id) {
+            const art = artifactsData[id];
+            if (!art) return;
             
+            openAgent();
+            appCode = art.content;
+            
+            setTimeout(() => {
+                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${art.content.replace(/"/g, '&quot;')}"></iframe>`;
+                document.getElementById('dlApp').style.display = 'block';
+                
+                const msgs = document.getElementById('builderMsgs');
+                msgs.innerHTML = `<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>${art.title}</strong><br><em style="font-size:12px;color:#6b7280;">Ask me to improve it!</em></div></div>`;
+            }, 100);
+        }
+        
+        function handleImg(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                uploadedImg = ev.target.result;
+                document.getElementById('imgText').textContent = '✅ ' + file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        async function buildApp() {
             const inp = document.getElementById('builderInp');
             const text = inp.value.trim();
             
-            if (!api) {
-                alert('Set API key in Settings first');
-                return;
-            }
-            
-            if (!text && !uploadedImage) {
-                alert('Please describe your app or upload an image');
-                return;
-            }
+            if (!api) { openModal('settings'); return; }
+            if (!text && !uploadedImg) return;
             
             const msgs = document.getElementById('builderMsgs');
-            
-            // Add user message with image if present
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg user';
-            let userContent = `<div class="label">YOU</div><div class="text">${text || 'Analyze this image'}</div>`;
-            if (uploadedImageData) {
-                userContent += `<img src="${uploadedImageData}" style="max-width:100%;border-radius:8px;margin-top:8px;">`;
-            }
-            userDiv.innerHTML = userContent;
-            msgs.appendChild(userDiv);
-            msgs.scrollTop = msgs.scrollHeight;
-            
+            msgs.innerHTML += `<div class="msg user"><div class="label">YOU</div><div class="text">${text}</div></div>`;
             inp.value = '';
             
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg ai';
-            aiDiv.id = 'building';
-            aiDiv.innerHTML = `
-                <div class="label">FEREN AI</div>
-                <div class="text" id="buildStatus">
-                    <div style="margin-bottom:8px;">🔍 Analyzing your request...</div>
-                </div>
-            `;
-            msgs.appendChild(aiDiv);
+            msgs.innerHTML += `<div class="msg ai" id="building"><div class="label">FEREN AI</div><div class="text">🔍 Analyzing... 🤖 Generating code...</div></div>`;
             msgs.scrollTop = msgs.scrollHeight;
             
-            const statusDiv = document.getElementById('buildStatus');
-            
-            // Start progress bar (estimate 15 seconds)
-            const progressInterval = showProgressBar(statusDiv, 15);
-            
-            // Update status: Planning
-            setTimeout(() => {
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">📋 Planning app structure...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }, 500);
-            
-            // Update status: Designing
-            setTimeout(() => {
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">🎨 Designing green-themed UI...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }, 1000);
-            
-            // Update status: Calling API
-            setTimeout(() => {
-                const imgText = uploadedImage ? ' (analyzing image)' : '';
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">🤖 Generating code with Claude${imgText}...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }, 1500);
-            
             try {
-                // Build the message content
-                let messageContent = uploadedImage 
-                    ? `Fix or improve this app based on the screenshot:\n\n${text}\n\nCreate a complete, working HTML app with GREEN theme.`
-                    : `Create a complete HTML app: ${text}\n\nSingle file, GREEN theme (#10b981, #059669), fully functional, modern design. Return ONLY HTML.`;
+                let msgContent = [{
+                    role: 'user',
+                    content: `Create HTML app: ${text}\n\nGREEN theme, fully functional. Return ONLY HTML.`
+                }];
                 
-                // Prepare message with or without image
-                let messages = [];
-                
-                if (uploadedImageData) {
-                    // Extract base64 data
-                    const base64Data = uploadedImageData.split(',')[1];
-                    const mediaType = uploadedImageData.split(';')[0].split(':')[1];
-                    
-                    messages = [{
+                if (uploadedImg) {
+                    const base64 = uploadedImg.split(',')[1];
+                    const type = uploadedImg.split(';')[0].split(':')[1];
+                    msgContent = [{
                         role: 'user',
                         content: [
-                            {
-                                type: 'image',
-                                source: {
-                                    type: 'base64',
-                                    media_type: mediaType,
-                                    data: base64Data
-                                }
-                            },
-                            {
-                                type: 'text',
-                                text: messageContent
-                            }
+                            { type: 'image', source: { type: 'base64', media_type: type, data: base64 }},
+                            { type: 'text', text: `Fix/improve based on image: ${text}` }
                         ]
-                    }];
-                } else {
-                    messages = [{
-                        role: 'user',
-                        content: messageContent
                     }];
                 }
                 
@@ -1005,226 +516,57 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: api,
-                        model: selectedModel,
-                        messages: messages,
+                        model: model,
+                        messages: msgContent,
                         max_tokens: 4096
                     })
                 });
                 
-                // Update status: Processing
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">⚙️ Processing response...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-                
                 const data = await res.json();
                 let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
-                
-                // Update status: Validating
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">✅ Validating HTML code...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-                
                 appCode = code;
                 
-                // Save to FerenAgent project
-                const agentProjectId = getOrCreateAgentProject();
-                const appId = 'app_' + Date.now();
-                
-                // Update status: Saving
-                statusDiv.innerHTML += `<div style="margin-bottom:8px;">💾 Saving to FerenAgent project...</div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-                
-                artifactsData[appId] = {
-                    id: appId,
-                    type: 'html',
-                    title: text.substring(0, 40) || 'Image-based App',
-                    content: code,
-                    chatId: null,
-                    projectId: agentProjectId,
-                    hasImage: !!uploadedImage,
-                    created: Date.now()
-                };
+                // Save artifact
+                const agentProjId = getOrCreateAgentProj();
+                const appId = 'app' + Date.now();
+                artifactsData[appId] = { id: appId, type: 'html', title: text.substring(0,40), content: code, projectId: agentProjId, created: Date.now() };
                 localStorage.setItem('artifacts', JSON.stringify(artifactsData));
-                
-                if (!projectsData[agentProjectId].apps) {
-                    projectsData[agentProjectId].apps = [];
-                }
-                projectsData[agentProjectId].apps.push(appId);
-                localStorage.setItem('projects', JSON.stringify(projectsData));
-                
                 updateAll();
                 
-                // Clear progress bar and show completion
-                clearInterval(progressInterval);
-                completeProgressBar();
-                
-                // Update status: Complete
-                setTimeout(() => {
-                    statusDiv.innerHTML += `<div style="margin-bottom:8px;">🎉 Rendering preview...</div>`;
-                    msgs.scrollTop = msgs.scrollHeight;
-                    
-                    setTimeout(() => {
-                        const appTitle = currentAppDescription || text.substring(0, 40);
-                        
-                        document.getElementById('building').innerHTML = `
-                            <div class="label">FEREN AI</div>
-                            <div class="text">
-                                <div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ ${isIteration ? 'App Updated' : 'App Built'} Successfully!</div>
-                                <div style="font-size:13px;color:#6b7280;margin-bottom:12px;">
-                                    ${uploadedImage ? '• Analyzed uploaded image<br>' : ''}
-                                    ${isIteration ? '• Applied your changes<br>' : ''}
-                                    • Saved to FerenAgent Apps project<br>
-                                    • Preview ready on the right →<br>
-                                    <br>
-                                    <em style="color:#10b981;">💡 Type "fix the button" or "add a feature" to keep improving!</em>
-                                </div>
-                                
-                                <div class="artifact-card" onclick="focusPreview()">
-                                    <div class="artifact-card-header">
-                                        <div class="artifact-card-title">
-                                            <span>📱</span>
-                                            <span>${appTitle}</span>
-                                        </div>
-                                        <div class="artifact-card-actions">
-                                            <button class="artifact-card-btn" onclick="event.stopPropagation(); copyAppCode()">📋 Copy</button>
-                                            <button class="artifact-card-btn" onclick="event.stopPropagation(); downloadApp()">📥 Download</button>
-                                        </div>
-                                    </div>
-                                    <div class="artifact-card-preview">
-                                        <iframe class="artifact-card-iframe" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>
-                                    </div>
-                                    <div style="margin-top:8px;font-size:11px;color:#6b7280;text-align:center;">
-                                        Click to view full screen →
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
-                        document.getElementById('dlApp').style.display = 'block';
-                        
-                        removeImage();
-                        
-                        console.log(`✅ App ${isIteration ? 'updated' : 'built'} and saved to project:`, agentProjectId);
-                    }, 300);
-                }, 500);
-                
+                document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">✨ Done! Saved to FerenAgent Apps.<br><em style="font-size:12px;color:#10b981;">Ask me to improve it!</em></div>`;
+                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
+                document.getElementById('dlApp').style.display = 'block';
+                uploadedImg = null;
+                document.getElementById('imgText').textContent = '📷 Upload image';
             } catch (e) {
-                console.error(e);
-                clearInterval(progressInterval);
                 document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">❌ Error: ${e.message}</div>`;
             }
         }
         
-        function getOrCreateAgentProject() {
-            // Find or create "FerenAgent Apps" project
-            let agentProject = Object.values(projectsData).find(p => p.name === 'FerenAgent Apps');
-            
-            if (!agentProject) {
-                const id = 'p_ferenagent';
-                projectsData[id] = {
-                    id: id,
-                    name: 'FerenAgent Apps',
-                    created: Date.now(),
-                    apps: []
-                };
+        function getOrCreateAgentProj() {
+            let p = Object.values(projectsData).find(x => x.name === 'FerenAgent Apps');
+            if (!p) {
+                const id = 'pferen';
+                projectsData[id] = { id, name: 'FerenAgent Apps', created: Date.now(), apps: [] };
                 localStorage.setItem('projects', JSON.stringify(projectsData));
+                updateAll();
                 return id;
             }
-            
-            return agentProject.id;
-        }
-
-        // Image Upload Functions
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedImageData = e.target.result;
-                uploadedImage = file.name;
-                
-                document.getElementById('imagePreview').src = e.target.result;
-                document.getElementById('imagePreview').classList.add('show');
-                document.getElementById('uploadArea').classList.add('has-image');
-                document.getElementById('uploadText').textContent = '✅ ' + file.name;
-                document.getElementById('removeImg').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removeImage() {
-            uploadedImage = null;
-            uploadedImageData = null;
-            document.getElementById('imagePreview').classList.remove('show');
-            document.getElementById('uploadArea').classList.remove('has-image');
-            document.getElementById('uploadText').textContent = 'Upload image (screenshot, mockup, error)';
-            document.getElementById('removeImg').style.display = 'none';
-            document.getElementById('imageInput').value = '';
-        }
-
-        // Progress bar function
-        function showProgressBar(container, duration) {
-            const progressHTML = `
-                <div class="progress-bar-container show" id="progressBarContainer">
-                    <div class="progress-bar" id="progressBar">0%</div>
-                    <div class="time-estimate" id="timeEstimate">${duration}s</div>
-                </div>
-            `;
-            container.innerHTML += progressHTML;
-            
-            let progress = 0;
-            let elapsed = 0;
-            const interval = setInterval(() => {
-                elapsed += 0.1;
-                progress = Math.min(95, (elapsed / duration) * 100);
-                
-                const bar = document.getElementById('progressBar');
-                const timeEst = document.getElementById('timeEstimate');
-                
-                if (bar) {
-                    bar.style.width = progress + '%';
-                    bar.textContent = Math.floor(progress) + '%';
-                }
-                
-                if (timeEst) {
-                    const remaining = Math.max(0, duration - elapsed);
-                    timeEst.textContent = remaining.toFixed(1) + 's';
-                }
-                
-                if (elapsed >= duration) {
-                    clearInterval(interval);
-                }
-            }, 100);
-            
-            return interval;
-        }
-
-        function completeProgressBar() {
-            const bar = document.getElementById('progressBar');
-            if (bar) {
-                bar.style.width = '100%';
-                bar.textContent = '100%';
-            }
-            const timeEst = document.getElementById('timeEstimate');
-            if (timeEst) {
-                timeEst.textContent = 'Done!';
-            }
+            return p.id;
         }
         
         function showPreview() {
-            document.getElementById('previewTab').classList.add('active');
+            document.getElementById('prevTab').classList.add('active');
             document.getElementById('codeTab').classList.remove('active');
-            if (appCode) {
-                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${appCode.replace(/"/g, '&quot;')}"></iframe>`;
-            }
+            if (appCode) document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${appCode.replace(/"/g, '&quot;')}"></iframe>`;
         }
         
         function showCode() {
             document.getElementById('codeTab').classList.add('active');
-            document.getElementById('previewTab').classList.remove('active');
+            document.getElementById('prevTab').classList.remove('active');
             if (appCode) {
                 const escaped = appCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                document.getElementById('preview').innerHTML = `<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow:auto;height:100%;white-space:pre-wrap;overflow-y:scroll;">${escaped}</div>`;
+                document.getElementById('preview').innerHTML = `<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow-y:scroll;height:100%;white-space:pre-wrap;">${escaped}</div>`;
             }
         }
         
@@ -1240,17 +582,20 @@
         
         function dlChat() {
             if (!currentChatId) return;
-            const chat = chatsData[currentChatId];
-            let md = '# ' + chat.title + '\n\n';
-            chat.msgs.forEach(m => {
-                md += `## ${m.role}\n${m.content}\n\n`;
-            });
+            const c = chatsData[currentChatId];
+            let md = `# ${c.title}\n\n`;
+            c.msgs.forEach(m => { md += `## ${m.role}\n${m.content}\n\n`; });
             const blob = new Blob([md], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'chat.md';
             a.click();
+        }
+        
+        function shareChat() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('✅ Link copied!');
         }
         
         function editChat(id) {
@@ -1263,7 +608,7 @@
         }
         
         function delChat(id) {
-            if (confirm('Delete chat?')) {
+            if (confirm('Delete?')) {
                 delete chatsData[id];
                 if (currentChatId === id) newChat();
                 localStorage.setItem('chats', JSON.stringify(chatsData));
@@ -1271,7 +616,7 @@
             }
         }
         
-        function editProject(id) {
+        function editProj(id) {
             const name = prompt('New name:', projectsData[id].name);
             if (name) {
                 projectsData[id].name = name;
@@ -1280,7 +625,7 @@
             }
         }
         
-        function delProject(id) {
+        function delProj(id) {
             if (confirm('Delete?')) {
                 delete projectsData[id];
                 localStorage.setItem('projects', JSON.stringify(projectsData));
@@ -1288,14 +633,15 @@
             }
         }
         
-        function selectProject(id) {
-            console.log('Project selected:', id);
-        }
-        
-        function goToArt(id) {
-            const art = artifactsData[id];
-            if (art && art.chatId && chatsData[art.chatId]) {
-                loadChat(art.chatId);
+        function dlArt(id) {
+            const a = artifactsData[id];
+            if (a) {
+                const blob = new Blob([a.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = a.title + '.html';
+                link.click();
             }
         }
         
