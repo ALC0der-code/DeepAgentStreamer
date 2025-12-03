@@ -275,9 +275,10 @@
 
         .messages {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll !important;
+            overflow-x: hidden;
             padding: 30px 20px;
-            max-width: 900px;
+            max-width: 100%;
             width: 100%;
             margin: 0 auto;
         }
@@ -285,6 +286,8 @@
         .msg {
             margin-bottom: 20px;
             animation: fadeIn 0.3s;
+            max-width: 850px;
+            width: 100%;
         }
 
         @keyframes fadeIn {
@@ -318,6 +321,8 @@
             font-size: 14px;
             line-height: 1.8;
             color: #1f2937;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .msg-text h1, .msg-text h2, .msg-text h3 {
@@ -809,9 +814,31 @@
         init();
 
         function init() {
+            loadProjects();
+            loadChats();
+            loadArtifacts();
             updateUI();
-            if (!api) openModal('settings');
-            else newChat();
+            
+            // Load saved model
+            const savedModel = localStorage.getItem('model');
+            const savedModelName = localStorage.getItem('modelName');
+            if (savedModel) {
+                model = savedModel;
+                document.getElementById('modelName').textContent = savedModelName || 'Claude Sonnet 4.5';
+            }
+            
+            if (!api) {
+                openModal('settings');
+            } else {
+                // Auto-create first chat if none exist
+                if (Object.keys(chats).length === 0) {
+                    newChat();
+                } else {
+                    // Open most recent chat
+                    const recent = Object.values(chats).sort((a, b) => b.created - a.created)[0];
+                    if (recent) openChat(recent.id);
+                }
+            }
         }
 
         function updateUI() {
@@ -958,10 +985,16 @@
 
         function newChat() {
             const id = 'c' + Date.now();
-            chats[id] = { id, title: 'New Chat', msgs: [], created: Date.now() };
+            chats[id] = { 
+                id, 
+                title: 'New Chat', 
+                msgs: [], 
+                created: Date.now() 
+            };
             currentChat = id;
             localStorage.setItem('chats', JSON.stringify(chats));
             openChat(id);
+            updateUI();
         }
 
         function openChat(id) {
@@ -973,7 +1006,10 @@
             const msgs = document.getElementById('messages');
             msgs.innerHTML = '';
             
-            (chats[id].msgs || []).forEach(m => addMsg(m.role, m.content, false));
+            if (chats[id] && chats[id].msgs) {
+                chats[id].msgs.forEach(m => addMsg(m.role, m.content, false));
+            }
+            
             updateUI();
         }
 
@@ -1019,13 +1055,23 @@
             msgs.appendChild(div);
             msgs.scrollTop = msgs.scrollHeight;
             
-            if (save && currentChat) {
-                chats[currentChat].msgs.push({ role, content });
-                if (role === 'user' && chats[currentChat].msgs.length === 1) {
-                    chats[currentChat].title = content.substring(0, 35);
+            if (save && currentChat && chats[currentChat]) {
+                // Save message to current chat
+                if (!chats[currentChat].msgs) {
+                    chats[currentChat].msgs = [];
                 }
+                chats[currentChat].msgs.push({ role, content });
+                
+                // Update chat title from first user message
+                if (role === 'user' && chats[currentChat].msgs.length === 1) {
+                    chats[currentChat].title = content.substring(0, 40);
+                }
+                
+                // Save to localStorage immediately
                 localStorage.setItem('chats', JSON.stringify(chats));
                 updateUI();
+                
+                console.log('Chat saved:', currentChat, 'Total messages:', chats[currentChat].msgs.length);
             }
         }
 
