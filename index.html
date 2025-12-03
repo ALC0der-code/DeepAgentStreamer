@@ -316,8 +316,63 @@
 
         .msg-text {
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #1f2937;
+        }
+
+        .msg-text h1, .msg-text h2, .msg-text h3 {
+            color: #065f46;
+            font-weight: 600;
+            margin: 16px 0 8px;
+        }
+
+        .msg-text h1 { font-size: 20px; }
+        .msg-text h2 { font-size: 18px; }
+        .msg-text h3 { font-size: 16px; }
+
+        .msg-text p {
+            margin-bottom: 12px;
+        }
+
+        .msg-text ul, .msg-text ol {
+            margin: 8px 0 12px 24px;
+        }
+
+        .msg-text li {
+            margin-bottom: 6px;
+        }
+
+        .msg-text strong {
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .msg-text em {
+            font-style: italic;
+            color: #059669;
+        }
+
+        .msg-text code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #059669;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 18px;
+            background: #10b981;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .artifact {
@@ -952,9 +1007,12 @@
             // Extract artifacts
             const parts = extractArtifacts(content);
             
+            // Format the text content
+            const formattedText = formatText(parts.text);
+            
             div.innerHTML = `
                 <div class="msg-label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div>
-                <div class="msg-text">${parts.text}</div>
+                <div class="msg-text">${formattedText}</div>
                 ${parts.artifacts.map(a => createArtifact(a)).join('')}
             `;
             
@@ -1065,36 +1123,138 @@
             btn.disabled = true;
             btn.textContent = '...';
             
+            // Create streaming message container
+            const msgs = document.getElementById('messages');
+            const streamDiv = document.createElement('div');
+            streamDiv.className = 'msg ai';
+            streamDiv.id = 'streaming';
+            streamDiv.innerHTML = `
+                <div class="msg-label">FEREN AI</div>
+                <div class="msg-text" id="streamText"><span class="typing-cursor"></span></div>
+            `;
+            msgs.appendChild(streamDiv);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            const streamText = document.getElementById('streamText');
+            let fullResponse = '';
+            
             try {
-                const res = await fetch('/api/anthropic', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        apiKey: api,
-                        messages: [{ role: 'user', content: text }],
-                        max_tokens: 2048
-                    })
-                });
-                
-                const data = await res.json();
-                const reply = data.content[0].text;
-                
-                if (data.usage) {
-                    usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
-                    usage.calls++;
-                    usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
-                    localStorage.setItem('usage', JSON.stringify(usage));
-                    updateUI();
+                // Try streaming first
+                try {
+                    const res = await fetch('/api/stream', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            apiKey: api,
+                            model: model,
+                            messages: [{ role: 'user', content: text }]
+                        })
+                    });
+                    
+                    if (res.ok) {
+                        const reader = res.body.getReader();
+                        const decoder = new TextDecoder();
+                        
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+                            
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split('\n');
+                            
+                            for (const line of lines) {
+                                if (line.startsWith('data: ')) {
+                                    const data = line.slice(6);
+                                    if (data === '[DONE]') continue;
+                                    
+                                    try {
+                                        const parsed = JSON.parse(data);
+                                        if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                                            fullResponse += parsed.delta.text;
+                                            streamText.innerHTML = formatText(fullResponse) + '<span class="typing-cursor"></span>';
+                                            msgs.scrollTop = msgs.scrollHeight;
+                                        }
+                                        if (parsed.type === 'message_delta' && parsed.usage) {
+                                            usage.tokens += (parsed.usage.input_tokens || 0) + (parsed.usage.output_tokens || 0);
+                                            usage.calls++;
+                                            usage.cost += ((parsed.usage.input_tokens || 0) * 3 + (parsed.usage.output_tokens || 0) * 15) / 1000000;
+                                            localStorage.setItem('usage', JSON.stringify(usage));
+                                            updateUI();
+                                        }
+                                    } catch (e) {}
+                                }
+                            }
+                        }
+                    } else {
+                        throw new Error('Streaming not available');
+                    }
+                } catch (streamErr) {
+                    // Fallback to regular API
+                    streamText.innerHTML = 'Generating response...<span class="typing-cursor"></span>';
+                    
+                    const res = await fetch('/api/anthropic', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            apiKey: api,
+                            messages: [{ role: 'user', content: text }],
+                            max_tokens: 2048
+                        })
+                    });
+                    
+                    const data = await res.json();
+                    fullResponse = data.content[0].text;
+                    
+                    if (data.usage) {
+                        usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
+                        usage.calls++;
+                        usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
+                        localStorage.setItem('usage', JSON.stringify(usage));
+                        updateUI();
+                    }
                 }
                 
-                addMsg('assistant', reply);
+                // Remove streaming div and add properly formatted message
+                streamDiv.remove();
+                addMsg('assistant', fullResponse);
                 
             } catch (e) {
+                streamDiv.remove();
                 addMsg('assistant', 'Error: ' + e.message);
             }
             
             btn.disabled = false;
             btn.textContent = 'Send';
+        }
+
+        function formatText(text) {
+            // Format markdown-like text to HTML
+            let formatted = text
+                // Headers
+                .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Italic
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Line breaks
+                .replace(/\n\n/g, '</p><p>')
+                // Bullet points
+                .replace(/^- (.*?)$/gm, '<li>$1</li>')
+                // Inline code
+                .replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Wrap in paragraphs if not already
+            if (!formatted.includes('<p>') && !formatted.includes('<h')) {
+                formatted = '<p>' + formatted + '</p>';
+            }
+            
+            // Wrap list items in ul
+            if (formatted.includes('<li>')) {
+                formatted = formatted.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+            }
+            
+            return formatted;
         }
 
         function openBuilder() {
