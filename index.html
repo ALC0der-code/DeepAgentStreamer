@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feren AI</title>
+    <title>Feren.AI</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({ startOnLoad: false, theme: 'default' });
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,263 +13,226 @@
             box-sizing: border-box;
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             height: 100vh;
             overflow: hidden;
-            background: #f5f5dc;
         }
 
-        .app-container {
+        .app {
             display: flex;
             height: 100vh;
         }
 
-        /* LEFT SIDEBAR */
+        /* SIDEBAR */
         .sidebar {
-            width: 280px;
+            width: 260px;
             background: linear-gradient(180deg, #065f46 0%, #064e3b 100%);
+            color: white;
             display: flex;
             flex-direction: column;
-            color: white;
         }
 
         .sidebar-header {
             padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .logo {
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            letter-spacing: 0.5px;
         }
 
-        .logo-icon {
-            font-size: 28px;
-        }
-
-        .logo-text {
-            font-size: 22px;
-            font-weight: 900;
-            font-family: 'Archivo Black', sans-serif;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-nav {
+        .sidebar-content {
             flex: 1;
             overflow-y: auto;
         }
 
-        .nav-section {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .section {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .section-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 13px;
-            font-weight: 600;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
             opacity: 0.8;
-        }
-
-        .icon-btn {
-            width: 24px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .nav-item {
-            padding: 10px 12px;
-            margin: 4px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.25);
             font-weight: 600;
         }
 
-        .item-menu-trigger {
-            margin-left: auto;
-            width: 28px;
-            height: 28px;
-            background: rgba(255, 255, 255, 0.25);
+        .section-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .section-btn {
+            width: 22px;
+            height: 22px;
+            background: rgba(255,255,255,0.2);
             border: none;
+            border-radius: 4px;
             color: white;
             cursor: pointer;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .item-menu-trigger:hover {
-            background: rgba(255, 255, 255, 0.4);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .item-dropdown {
-            display: none;
-            position: absolute;
-            right: 40px;
-            top: 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 100;
-            min-width: 150px;
-            overflow: hidden;
-        }
-
-        .item-dropdown.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #1f2937;
-            transition: all 0.2s;
-            border: none;
-            background: white;
-            width: 100%;
-            text-align: left;
-        }
-
-        .dropdown-item:hover {
-            background: #f3f4f6;
-        }
-
-        .dropdown-icon {
-            font-size: 16px;
-        }
-
-        .feren-agent-btn {
-            margin: 20px;
-            padding: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .feren-agent-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .feren-agent-btn.active {
-            background: white;
-            color: #10b981;
-        }
-
-        .sidebar-footer {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .usage-stats {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
             font-size: 12px;
         }
 
-        .usage-label {
-            opacity: 0.7;
-            margin-bottom: 4px;
+        .section-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
-        .usage-value {
+        .list-item {
+            padding: 8px 10px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .list-item:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .list-item.active {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .item-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .item-dots {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            border-radius: 4px;
+            color: white;
             font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-dots:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .dropdown {
+            position: absolute;
+            right: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            min-width: 160px;
+            display: none;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 10px 14px;
+            background: white;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .feren-btn {
+            margin: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
             font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .feren-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .feren-btn.active {
+            background: white;
+            color: #065f46;
+        }
+
+        .usage {
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            margin: 0 16px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        .usage-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .settings-btn {
             width: 100%;
             padding: 10px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
         }
 
-        .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
+        /* MAIN AREA */
+        .main {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #f5f5dc;
         }
 
-        /* REGULAR CHAT VIEW */
-        .chat-view {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .chat-view-header {
-            padding: 16px 24px;
+        .main-header {
+            padding: 14px 20px;
             background: white;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
@@ -279,302 +240,167 @@
             align-items: center;
         }
 
-        .model-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 14px;
-            background: #faf9f0;
-            border: 1px solid #e8e6d8;
+        .model-select {
+            padding: 6px 12px;
+            background: #f0fdf4;
+            border: 1px solid #d1fae5;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .model-selector:hover {
-            border-color: #c9c7b8;
-        }
-
-        .model-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #10b981;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .model-name {
+            gap: 8px;
             font-size: 13px;
-            font-weight: 500;
             color: #065f46;
         }
 
-        .chat-actions {
+        .header-actions {
             display: flex;
             gap: 8px;
         }
 
         .header-btn {
-            padding: 8px 14px;
+            padding: 6px 12px;
             background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            color: #6b7280;
-            font-size: 12px;
+            border-radius: 6px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            font-size: 12px;
+            color: #6b7280;
         }
 
         .header-btn:hover {
-            background: #f9fafb;
-            color: #10b981;
             border-color: #10b981;
+            color: #10b981;
         }
 
-        .chat-messages {
+        .messages {
             flex: 1;
-            overflow-y: auto !important;
-            overflow-x: hidden;
-            padding: 40px 24px;
-            scroll-behavior: smooth;
+            overflow-y: auto;
+            padding: 30px 20px;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
         }
 
-        .message {
-            margin-bottom: 24px;
-            animation: slideIn 0.3s ease;
+        .msg {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
         }
 
-        @keyframes slideIn {
+        @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .message.user {
+        .msg.user {
             background: white;
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-radius: 12px;
-            border-left: 4px solid #10b981;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 3px solid #10b981;
         }
 
-        .message.assistant {
+        .msg.ai {
             background: #ecfdf5;
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-radius: 12px;
-            border-left: 4px solid #059669;
+            border-left: 3px solid #059669;
         }
 
-        .message-label {
-            font-size: 11px;
+        .msg-label {
+            font-size: 10px;
             text-transform: uppercase;
             font-weight: 600;
             color: #10b981;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
 
-        .message-content {
-            font-size: 15px;
-            line-height: 1.7;
+        .msg-text {
+            font-size: 14px;
+            line-height: 1.6;
             color: #1f2937;
-            white-space: pre-wrap;
         }
 
-        .message-content p {
-            margin-bottom: 12px;
-        }
-
-        .message-content ul, .message-content ol {
-            margin: 8px 0 12px 20px;
-        }
-
-        .message-content li {
-            margin-bottom: 4px;
-        }
-
-        .message-content strong {
-            font-weight: 600;
-            color: #065f46;
-        }
-
-        .message-content code {
-            background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Monaco', monospace;
-            font-size: 13px;
-            color: #059669;
-        }
-
-        /* ARTIFACTS */
-        .artifact-container {
+        .artifact {
             margin-top: 12px;
             border: 2px solid #d1fae5;
-            border-radius: 12px;
-            overflow: hidden;
+            border-radius: 10px;
             background: white;
-            transition: all 0.3s;
-        }
-
-        .artifact-container.highlight {
-            box-shadow: 0 0 0 3px #10b981;
+            overflow: hidden;
         }
 
         .artifact-header {
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: #ecfdf5;
             border-bottom: 1px solid #d1fae5;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
 
         .artifact-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #065f46;
         }
 
-        .artifact-actions {
+        .artifact-btns {
             display: flex;
             gap: 6px;
         }
 
         .artifact-btn {
-            padding: 4px 10px;
+            padding: 4px 8px;
             background: white;
             border: 1px solid #d1fae5;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 11px;
             color: #059669;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .artifact-btn:hover {
-            background: #f0fdf4;
-            border-color: #10b981;
-        }
-
-        .artifact-content {
-            padding: 0;
-            max-height: 600px;
+        .artifact-body {
+            max-height: 500px;
             overflow: auto;
-            background: white;
+        }
+
+        .artifact-code {
+            padding: 14px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
         }
 
         .artifact-iframe {
             width: 100%;
-            min-height: 400px;
+            height: 400px;
             border: none;
         }
 
-        .artifact-code {
-            padding: 16px;
-            background: #1e293b;
-            color: #e2e8f0;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            overflow-x: auto;
-        }
-
-        .artifact-svg {
+        .input-area {
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f9fafb;
-        }
-
-        .artifact-react {
-            padding: 0;
-            min-height: 300px;
-        }
-
-        .streaming-cursor {
-            display: inline-block;
-            width: 8px;
-            height: 18px;
-            background: #10b981;
-            margin-left: 2px;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 16px 20px;
-            background: #ecfdf5;
-            border-radius: 12px;
-            border-left: 4px solid #10b981;
-        }
-
-        .loading-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .loading-dot {
-            width: 6px;
-            height: 6px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-
-        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        /* LARGE CHAT INPUT */
-        .chat-input-area {
-            padding: 20px 24px 32px;
             background: #f5f5dc;
         }
 
-        .input-container {
+        .input-box {
             max-width: 900px;
             margin: 0 auto;
             background: white;
             border: 2px solid #d1fae5;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            padding: 14px;
         }
 
-        .chat-textarea {
+        .input-text {
             width: 100%;
-            min-height: 120px;
-            max-height: 300px;
-            padding: 12px;
+            min-height: 100px;
             border: none;
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
-            color: #1f2937;
             resize: vertical;
-            line-height: 1.6;
         }
 
-        .chat-textarea:focus {
+        .input-text:focus {
             outline: none;
         }
 
@@ -582,94 +408,86 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 12px;
-            padding-top: 12px;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid #e5e7eb;
         }
 
-        .input-hints {
-            font-size: 12px;
+        .input-hint {
+            font-size: 11px;
             color: #6b7280;
         }
 
-        .send-btn {
-            padding: 10px 24px;
+        .send {
+            padding: 8px 20px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none;
             border-radius: 8px;
             color: white;
             font-weight: 600;
-            font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .send-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .send-btn:disabled {
+        .send:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
         }
 
-        /* BUILDER VIEW (3-pane when active) */
-        .builder-view {
+        /* BUILDER */
+        .builder {
             display: flex;
             height: 100%;
         }
 
         .builder-chat {
-            width: 400px;
+            width: 380px;
             background: white;
-            border-right: 1px solid #d1fae5;
+            border-right: 1px solid #e5e7eb;
             display: flex;
             flex-direction: column;
         }
 
-        .builder-messages {
+        .builder-msgs {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
         }
 
         .builder-input {
-            padding: 16px;
+            padding: 14px;
             border-top: 1px solid #e5e7eb;
         }
 
-        .builder-input-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .builder-textarea {
+        .builder-text {
             width: 100%;
-            padding: 12px 14px;
-            background: #f9fafb;
+            padding: 10px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 13px;
-            min-height: 80px;
+            min-height: 70px;
             resize: vertical;
             font-family: inherit;
         }
 
-        .builder-textarea:focus {
-            outline: none;
-            border-color: #10b981;
+        .builder-send {
+            margin-top: 8px;
+            width: 100%;
+            padding: 10px;
+            background: #10b981;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        .preview-panel {
+        .preview {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
 
         .preview-header {
-            padding: 12px 20px;
+            padding: 10px 16px;
             background: #f9fafb;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
@@ -681,375 +499,238 @@
             gap: 4px;
         }
 
-        .preview-tab {
+        .tab {
             padding: 6px 12px;
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 6px;
             font-size: 12px;
-            color: #6b7280;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .preview-tab.active {
+        .tab.active {
             background: #10b981;
             color: white;
-            border-color: #10b981;
         }
 
-        .preview-content {
+        .preview-body {
             flex: 1;
+            background: white;
         }
 
-        .preview-iframe {
+        .preview-frame {
             width: 100%;
             height: 100%;
             border: none;
         }
 
-        .code-view {
-            width: 100%;
-            height: 100%;
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 20px;
-            font-family: 'Monaco', monospace;
-            font-size: 13px;
-            overflow: auto;
-            white-space: pre-wrap;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #9ca3af;
-        }
-
-        .empty-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-        }
-
-        /* MODALS */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            inset: 0;
+            background: rgba(0,0,0,0.5);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
-        .modal-content {
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
             background: white;
-            padding: 30px;
-            border-radius: 16px;
-            max-width: 500px;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 450px;
             width: 90%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .modal-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: #065f46;
-            margin-bottom: 8px;
-        }
-
-        .modal-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: #374151;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .form-input {
             width: 100%;
-            padding: 10px 14px;
-            background: #f9fafb;
+            padding: 10px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 14px;
+            margin-bottom: 16px;
         }
 
-        .form-input:focus {
-            outline: none;
-            border-color: #10b981;
-        }
-
-        .modal-buttons {
+        .modal-btns {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: flex-end;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .btn-primary {
-            background: #10b981;
-            color: white;
-        }
+        .btn-primary { background: #10b981; color: white; }
+        .btn-secondary { background: #f3f4f6; color: #6b7280; }
 
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .usage-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .usage-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-
-        .usage-label {
-            opacity: 0.8;
-        }
-
-        .usage-value {
-            font-weight: 600;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(16, 185, 129, 0.3);
-            border-radius: 3px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 3px; }
     </style>
 </head>
 <body>
-    <!-- Model Selector Modal -->
-    <div id="modelModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">🤖 Select Model</div>
-            <div class="modal-subtitle">Choose your AI model</div>
-            <div class="form-group">
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div class="model-option" onclick="selectModel('claude-sonnet-4-20250514', 'Claude Sonnet 4.5')">
-                        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; cursor: pointer; border: 2px solid transparent;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='transparent'">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">C</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Sonnet 4.5</div>
-                                <div style="font-size: 11px; color: #6b7280;">Balanced speed & intelligence</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="model-option" onclick="selectModel('claude-opus-4-20250514', 'Claude Opus 4')">
-                        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; cursor: pointer; border: 2px solid transparent;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='transparent'">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #7c3aed; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">O</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Opus 4</div>
-                                <div style="font-size: 11px; color: #6b7280;">Most powerful model</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="model-option" onclick="selectModel('claude-haiku-4-20250514', 'Claude Haiku 4.5')">
-                        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; cursor: pointer; border: 2px solid transparent;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='transparent'">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #06b6d4; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">H</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Haiku 4.5</div>
-                                <div style="font-size: 11px; color: #6b7280;">Fastest & most affordable</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeModelModal()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
+    <!-- Modals -->
     <div id="settingsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-box">
             <div class="modal-title">⚙️ Settings</div>
-            <div class="modal-subtitle">Configure Feren AI</div>
-            <div class="form-group">
-                <label class="form-label">Anthropic API Key</label>
-                <input type="password" id="apiKeyInput" class="form-input" placeholder="sk-ant-api03-...">
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+            <label class="form-label">API Key</label>
+            <input type="password" id="apiKeyInput" class="form-input" placeholder="sk-ant-...">
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="closeModal('settings')">Cancel</button>
                 <button class="btn btn-primary" onclick="saveSettings()">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- New Project Modal -->
     <div id="projectModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-box">
             <div class="modal-title">📁 New Project</div>
-            <div class="modal-subtitle">Create a new project</div>
-            <div class="form-group">
-                <label class="form-label">Project Name</label>
-                <input type="text" id="projectNameInput" class="form-input" placeholder="My App Project">
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+            <label class="form-label">Project Name</label>
+            <input type="text" id="projectInput" class="form-input" placeholder="My Project">
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="closeModal('project')">Cancel</button>
                 <button class="btn btn-primary" onclick="createProject()">Create</button>
             </div>
         </div>
     </div>
 
-    <div class="app-container">
+    <div class="app">
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <div class="logo-icon">🌿</div>
-                    <div class="logo-text">Feren AI</div>
-                </div>
+                <div class="logo">🌿 FEREN.AI</div>
             </div>
 
-            <div class="sidebar-nav">
-                <!-- Projects Section -->
-                <div class="nav-section">
+            <div class="sidebar-content">
+                <!-- Projects -->
+                <div class="section">
                     <div class="section-header">
                         <span>Projects</span>
-                        <button class="icon-btn" onclick="openProjectModal()">+</button>
+                        <div class="section-btns">
+                            <button class="section-btn" onclick="searchSection('projects')">🔍</button>
+                            <button class="section-btn" onclick="openModal('project')">+</button>
+                            <button class="section-btn" id="collapseProj" onclick="collapse('projects')">▼</button>
+                        </div>
                     </div>
                     <div id="projectsList"></div>
                 </div>
 
-                <!-- Chats Section -->
-                <div class="nav-section">
+                <!-- Chats -->
+                <div class="section">
                     <div class="section-header">
                         <span>Chats</span>
-                        <button class="icon-btn" onclick="newRegularChat()">+</button>
+                        <div class="section-btns">
+                            <button class="section-btn" onclick="searchSection('chats')">🔍</button>
+                            <button class="section-btn" onclick="newChat()">+</button>
+                            <button class="section-btn" id="collapseChat" onclick="collapse('chats')">▼</button>
+                        </div>
                     </div>
                     <div id="chatsList"></div>
                 </div>
+
+                <!-- Artifacts -->
+                <div class="section">
+                    <div class="section-header">
+                        <span>Artifacts</span>
+                        <div class="section-btns">
+                            <button class="section-btn" onclick="searchSection('artifacts')">🔍</button>
+                            <button class="section-btn" id="collapseArt" onclick="collapse('artifacts')">▼</button>
+                        </div>
+                    </div>
+                    <div id="artifactsList"></div>
+                </div>
             </div>
 
-            <!-- Feren Agent Button -->
-            <button class="feren-agent-btn" id="ferenAgentBtn" onclick="openFerenAgent()">
-                <span>🤖</span>
-                <span>FerenAgent</span>
+            <button class="feren-btn" id="ferenBtn" onclick="openBuilder()">
+                🤖 FerenAgent
             </button>
 
-            <div class="sidebar-footer">
-                <!-- Usage Stats -->
-                <div class="usage-section" id="usageStats">
-                    <div class="usage-row">
-                        <span class="usage-label">Tokens Used</span>
-                        <span class="usage-value" id="tokensUsed">0</span>
-                    </div>
-                    <div class="usage-row">
-                        <span class="usage-label">API Calls</span>
-                        <span class="usage-value" id="apiCalls">0</span>
-                    </div>
-                    <div class="usage-row">
-                        <span class="usage-label">Est. Cost</span>
-                        <span class="usage-value" id="estCost">$0.00</span>
-                    </div>
-                </div>
+            <div class="usage">
+                <div class="usage-row"><span>Tokens</span><span id="tokens">0</span></div>
+                <div class="usage-row"><span>Calls</span><span id="calls">0</span></div>
+                <div class="usage-row"><span>Cost</span><span id="cost">$0.00</span></div>
+            </div>
 
-                <button class="settings-btn" onclick="openSettings()">
-                    <span>⚙️</span>
-                    <span>Settings</span>
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="openModal('settings')">
+                    ⚙️ Settings
                 </button>
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
-        <div class="main-content" id="mainContent">
-            <!-- REGULAR CHAT VIEW (LLM Query Tool) -->
-            <div id="regularChatView" style="display: none;" class="chat-view">
-                <div class="chat-view-header">
-                    <div class="model-selector" onclick="openModelSelector()">
-                        <div class="model-icon">C</div>
-                        <div class="model-name" id="currentModel">Claude Sonnet 4.5</div>
-                        <span style="font-size: 10px; color: #6b7280;">▼</span>
+        <!-- MAIN -->
+        <div class="main" id="main">
+            <!-- CHAT VIEW -->
+            <div id="chatView" style="display:flex; flex-direction:column; height:100%;">
+                <div class="main-header">
+                    <div class="model-select" onclick="openModal('model')">
+                        <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">C</span>
+                        <span id="modelName">Claude Sonnet 4.5</span>
+                        <span style="font-size:10px;">▼</span>
                     </div>
-                    <div class="chat-actions">
-                        <button class="header-btn" onclick="shareChat()">
-                            <span>🔗</span>
-                            <span>Share</span>
-                        </button>
-                        <button class="header-btn" onclick="downloadChat()">
-                            <span>📥</span>
-                            <span>Download</span>
-                        </button>
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="shareChat()">🔗 Share</button>
+                        <button class="header-btn" onclick="downloadChat()">📥 Download</button>
                     </div>
                 </div>
-                <div class="chat-messages" id="regularMessages"></div>
-                <div class="chat-input-area">
-                    <div class="input-container">
-                        <textarea 
-                            id="regularChatInput" 
-                            class="chat-textarea"
-                            placeholder="Ask me anything... I can help with questions, research, analysis, writing, and more."
-                        ></textarea>
+                <div class="messages" id="messages"></div>
+                <div class="input-area">
+                    <div class="input-box">
+                        <textarea id="input" class="input-text" placeholder="Ask me anything..."></textarea>
                         <div class="input-footer">
-                            <div class="input-hints">Shift+Enter for new line • Enter to send</div>
-                            <button class="send-btn" id="regularSendBtn" onclick="sendRegularMessage()">Send</button>
+                            <span class="input-hint">Shift+Enter for new line</span>
+                            <button class="send" id="sendBtn" onclick="send()">Send</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- FEREN AGENT BUILDER VIEW (3-pane) -->
-            <div id="ferenAgentView" class="builder-view" style="display: none;">
+            <!-- BUILDER VIEW -->
+            <div id="builderView" class="builder" style="display:none;">
                 <div class="builder-chat">
-                    <div class="builder-messages" id="builderMessages"></div>
+                    <div class="builder-msgs" id="builderMsgs"></div>
                     <div class="builder-input">
-                        <div class="builder-input-wrapper">
-                            <textarea id="builderInput" class="builder-textarea" placeholder="Describe the app you want to build..."></textarea>
-                            <button class="send-btn" id="builderSendBtn" onclick="buildApp()">Build App</button>
-                        </div>
+                        <textarea id="builderInput" class="builder-text" placeholder="Describe your app..."></textarea>
+                        <button class="builder-send" onclick="build()">Build App</button>
                     </div>
                 </div>
-
-                <div class="preview-panel">
+                <div class="preview">
                     <div class="preview-header">
                         <div class="preview-tabs">
-                            <div class="preview-tab active" onclick="switchPreview('preview')">👁️ Preview</div>
-                            <div class="preview-tab" onclick="switchPreview('code')">💻 Code</div>
+                            <button class="tab active" onclick="viewTab('preview')">👁️ Preview</button>
+                            <button class="tab" onclick="viewTab('code')">💻 Code</button>
                         </div>
-                        <button class="send-btn" onclick="downloadApp()" id="downloadBtn" style="display: none; padding: 6px 16px; font-size: 12px;">📥 Download</button>
+                        <button class="header-btn" id="dlBtn" onclick="downloadApp()" style="display:none;">📥 Download</button>
                     </div>
-                    <div class="preview-content" id="previewContent">
-                        <div class="empty-state">
-                            <div class="empty-icon">🌿</div>
-                            <div>Describe your app to start building</div>
+                    <div class="preview-body" id="previewBody">
+                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;">
+                            <div style="text-align:center;">
+                                <div style="font-size:48px;margin-bottom:12px;">🌿</div>
+                                <div>Describe an app to start</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1058,692 +739,444 @@
     </div>
 
     <script>
-        let apiKey = localStorage.getItem('feren_api_key');
-        let currentView = null;
-        let currentChatId = null;
-        let currentProjectId = null;
-        let currentAppCode = '';
-        let currentModel = 'claude-sonnet-4-20250514';
-        let currentModelName = 'Claude Sonnet 4.5';
-        let chats = JSON.parse(localStorage.getItem('feren_chats') || '{}');
-        let projects = JSON.parse(localStorage.getItem('feren_projects') || '{}');
-        let artifacts = JSON.parse(localStorage.getItem('feren_artifacts') || '{}');
-        let usage = JSON.parse(localStorage.getItem('feren_usage') || '{"tokens":0,"calls":0,"cost":0}');
+        mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+        let api = localStorage.getItem('api') || '';
+        let chats = JSON.parse(localStorage.getItem('chats') || '{}');
+        let projects = JSON.parse(localStorage.getItem('projects') || '{}');
+        let artifacts = JSON.parse(localStorage.getItem('artifacts') || '{}');
+        let usage = JSON.parse(localStorage.getItem('usage') || '{"tokens":0,"calls":0,"cost":0}');
+        let currentChat = null;
+        let currentProj = null;
+        let appCode = '';
+        let model = 'claude-sonnet-4-20250514';
 
         init();
 
         function init() {
-            loadProjectsList();
-            loadChatsList();
-            updateUsageDisplay();
-            if (!apiKey) setTimeout(openSettings, 500);
-            else newRegularChat();
+            updateUI();
+            if (!api) openModal('settings');
+            else newChat();
         }
 
-        // Usage Tracking
-        function updateUsage(inputTokens, outputTokens) {
-            usage.tokens += (inputTokens + outputTokens);
-            usage.calls += 1;
-            // Sonnet 4 pricing: $3/M input, $15/M output
-            usage.cost += (inputTokens * 3 / 1000000) + (outputTokens * 15 / 1000000);
-            localStorage.setItem('feren_usage', JSON.stringify(usage));
-            updateUsageDisplay();
+        function updateUI() {
+            loadProjects();
+            loadChats();
+            loadArtifacts();
+            document.getElementById('tokens').textContent = usage.tokens;
+            document.getElementById('calls').textContent = usage.calls;
+            document.getElementById('cost').textContent = '$' + usage.cost.toFixed(4);
         }
 
-        function updateUsageDisplay() {
-            document.getElementById('tokensUsed').textContent = usage.tokens.toLocaleString();
-            document.getElementById('apiCalls').textContent = usage.calls.toLocaleString();
-            document.getElementById('estCost').textContent = '$' + usage.cost.toFixed(4);
+        function openModal(type) {
+            document.getElementById(type + 'Modal').classList.add('show');
         }
 
-        // Settings
-        function openSettings() {
-            document.getElementById('settingsModal').style.display = 'flex';
-            document.getElementById('apiKeyInput').value = apiKey || '';
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').style.display = 'none';
+        function closeModal(type) {
+            document.getElementById(type + 'Modal').classList.remove('show');
         }
 
         function saveSettings() {
-            apiKey = document.getElementById('apiKeyInput').value.trim();
-            if (apiKey) {
-                localStorage.setItem('feren_api_key', apiKey);
-                closeSettings();
+            api = document.getElementById('apiKeyInput').value.trim();
+            if (api) {
+                localStorage.setItem('api', api);
+                closeModal('settings');
             }
-        }
-
-        // Projects
-        function openProjectModal() {
-            document.getElementById('projectModal').style.display = 'flex';
-        }
-
-        function closeProjectModal() {
-            document.getElementById('projectModal').style.display = 'none';
         }
 
         function createProject() {
-            const name = document.getElementById('projectNameInput').value.trim();
+            const name = document.getElementById('projectInput').value.trim();
             if (name) {
-                const id = 'proj_' + Date.now();
-                projects[id] = { id, name, created: new Date().toISOString(), chats: [] };
-                localStorage.setItem('feren_projects', JSON.stringify(projects));
-                loadProjectsList();
-                closeProjectModal();
+                const id = 'p' + Date.now();
+                projects[id] = { id, name, created: Date.now() };
+                localStorage.setItem('projects', JSON.stringify(projects));
+                updateUI();
+                closeModal('project');
             }
         }
 
-        function loadProjectsList() {
+        function loadProjects() {
             const list = document.getElementById('projectsList');
             const items = Object.values(projects).slice(0, 5);
             list.innerHTML = items.map(p => `
-                <div class="nav-item ${currentProjectId === p.id ? 'active' : ''}" 
-                     onclick="selectProject('${p.id}')">
+                <div class="list-item" onclick="selectProj('${p.id}')">
                     <span>📁</span>
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis">${p.name}</span>
+                    <span class="item-text">${p.name}</span>
+                    <button class="item-dots" onclick="event.stopPropagation();showMenu('p${p.id}')">⋮</button>
+                    <div class="dropdown" id="menup${p.id}">
+                        <button class="dropdown-btn" onclick="editProj('${p.id}')">✏️ Edit</button>
+                        <button class="dropdown-btn" onclick="delProj('${p.id}')">🗑️ Delete</button>
+                    </div>
                 </div>
-            `).join('') || '<div style="padding:8px; font-size:12px; opacity:0.6">No projects</div>';
+            `).join('') || '<div style="padding:8px;opacity:0.6;font-size:12px;">No projects</div>';
         }
 
-        function selectProject(id) {
-            currentProjectId = id;
-            loadProjectsList();
-        }
-
-        // Regular Chat (LLM Query Tool)
-        function newRegularChat() {
-            currentChatId = 'chat_' + Date.now();
-            chats[currentChatId] = {
-                id: currentChatId,
-                type: 'regular',
-                title: 'New Chat',
-                created: new Date().toISOString(),
-                messages: []
-            };
-            localStorage.setItem('feren_chats', JSON.stringify(chats));
-            loadChatsList();
-            openRegularChat(currentChatId);
-        }
-
-        function openRegularChat(id) {
-            currentChatId = id;
-            currentView = 'chat';
-            
-            document.getElementById('regularChatView').style.display = 'flex';
-            document.getElementById('ferenAgentView').style.display = 'none';
-            document.getElementById('ferenAgentBtn').classList.remove('active');
-            
-            const chat = chats[id];
-            const messagesDiv = document.getElementById('regularMessages');
-            messagesDiv.innerHTML = '';
-            
-            if (chat && chat.messages) {
-                chat.messages.forEach(msg => {
-                    addRegularMessage(msg.role, msg.content, false);
-                });
-            }
-            
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            loadChatsList();
-        }
-
-        function loadChatsList() {
+        function loadChats() {
             const list = document.getElementById('chatsList');
-            const items = Object.values(chats).filter(c => c.type === 'regular').slice(0, 10);
+            const items = Object.values(chats).slice(0, 10);
             list.innerHTML = items.map(c => `
-                <div class="nav-item ${currentChatId === c.id ? 'active' : ''}" 
-                     onclick="openRegularChat('${c.id}')">
+                <div class="list-item ${currentChat===c.id?'active':''}" onclick="openChat('${c.id}')">
                     <span>💬</span>
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis">${c.title}</span>
+                    <span class="item-text">${c.title}</span>
+                    <button class="item-dots" onclick="event.stopPropagation();showMenu('c${c.id}')">⋮</button>
+                    <div class="dropdown" id="menuc${c.id}">
+                        <button class="dropdown-btn" onclick="editChat('${c.id}')">✏️ Edit</button>
+                        <button class="dropdown-btn" onclick="moveChat('${c.id}')">📁 Move</button>
+                        <button class="dropdown-btn" onclick="delChat('${c.id}')">🗑️ Delete</button>
+                    </div>
                 </div>
-            `).join('') || '<div style="padding:8px; font-size:12px; opacity:0.6">No chats</div>';
+            `).join('') || '<div style="padding:8px;opacity:0.6;font-size:12px;">No chats</div>';
         }
 
-        function addRegularMessage(role, content, save = true) {
-            const messagesDiv = document.getElementById('regularMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
-            
-            // Parse content for artifacts
-            const { text, artifacts: foundArtifacts } = parseArtifacts(content);
-            
-            // Format the text nicely
-            const formattedText = formatMessageText(text);
-            
-            let artifactsHTML = '';
-            if (foundArtifacts.length > 0) {
-                artifactsHTML = foundArtifacts.map((artifact, idx) => {
-                    return renderArtifact(artifact, artifact.id);
-                }).join('');
-            }
-            
-            messageDiv.innerHTML = `
-                <div class="message-label">${role === 'user' ? 'You' : 'Feren AI'}</div>
-                <div class="message-content">${formattedText}</div>
-                ${artifactsHTML}
-            `;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-            if (save && currentChatId && chats[currentChatId]) {
-                chats[currentChatId].messages.push({ role, content });
-                if (role === 'user' && chats[currentChatId].messages.length === 1) {
-                    chats[currentChatId].title = content.substring(0, 40);
-                }
-                localStorage.setItem('feren_chats', JSON.stringify(chats));
-                loadChatsList();
-            }
-        }
-
-        function formatMessageText(text) {
-            // Convert markdown-style formatting to HTML
-            text = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
-                .replace(/##\s+(.*?)(\n|$)/g, '<h3 style="font-size: 16px; font-weight: 600; color: #065f46; margin: 12px 0 8px;">$1</h3>') // Headers
-                .replace(/\n\n/g, '</p><p>') // Paragraphs
-                .replace(/\n-\s/g, '\n• ') // Bullet points
-                .replace(/^\d+\.\s/gm, ''); // Remove numbered list markers
-            
-            return '<p>' + text + '</p>';
-        }
-
-        function parseArtifacts(content) {
-            const artifacts = [];
-            let text = content;
-
-            // Match code blocks with language
-            const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-            let match;
-            
-            while ((match = codeBlockRegex.exec(content)) !== null) {
-                const language = match[1] || 'text';
-                const code = match[2];
-                
-                // Detect artifact types
-                if (language === 'html' || code.includes('<!DOCTYPE html>')) {
-                    artifacts.push({
-                        type: 'html',
-                        title: 'HTML App',
-                        content: code
-                    });
-                } else if (language === 'javascript' || language === 'jsx') {
-                    artifacts.push({
-                        type: 'code',
-                        language: language,
-                        title: `${language.toUpperCase()} Code`,
-                        content: code
-                    });
-                } else if (language === 'svg') {
-                    artifacts.push({
-                        type: 'svg',
-                        title: 'SVG Image',
-                        content: code
-                    });
-                } else if (language === 'mermaid') {
-                    artifacts.push({
-                        type: 'mermaid',
-                        title: 'Diagram',
-                        content: code
-                    });
-                } else {
-                    artifacts.push({
-                        type: 'code',
-                        language: language,
-                        title: `${language.toUpperCase()} Code`,
-                        content: code
-                    });
-                }
-                
-                // Remove code block from text
-                text = text.replace(match[0], `\n[Artifact: ${artifacts[artifacts.length - 1].title}]\n`);
-            }
-
-            return { text, artifacts };
-        }
-
-        function renderArtifact(artifact, id) {
-            const copyBtn = `<button class="artifact-btn" onclick="copyArtifact('${id}')">📋 Copy</button>`;
-            const downloadBtn = `<button class="artifact-btn" onclick="downloadArtifact('${id}')">📥 Download</button>`;
-            
-            let contentHTML = '';
-            
-            switch (artifact.type) {
-                case 'html':
-                    const escapedHTML = artifact.content.replace(/"/g, '&quot;');
-                    contentHTML = `<iframe class="artifact-iframe" id="${id}" srcdoc="${escapedHTML}"></iframe>`;
-                    break;
-                    
-                case 'svg':
-                    contentHTML = `<div class="artifact-svg" id="${id}">${artifact.content}</div>`;
-                    break;
-                    
-                case 'mermaid':
-                    contentHTML = `<div class="artifact-content" id="${id}" style="padding: 20px; background: white;"><pre class="mermaid">${artifact.content}</pre></div>`;
-                    // Initialize mermaid if available
-                    setTimeout(() => {
-                        if (window.mermaid) {
-                            window.mermaid.init(undefined, document.querySelectorAll('.mermaid'));
-                        }
-                    }, 100);
-                    break;
-                    
-                default:
-                    const escapedCode = artifact.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    contentHTML = `<div class="artifact-code" id="${id}">${escapedCode}</div>`;
-            }
-            
-            // Store artifact content for copying/downloading
-            if (!window.artifacts) window.artifacts = {};
-            window.artifacts[id] = artifact.content;
-            
-            return `
-                <div class="artifact-container">
-                    <div class="artifact-header">
-                        <div class="artifact-title">${artifact.title}</div>
-                        <div class="artifact-actions">
-                            ${copyBtn}
-                            ${downloadBtn}
+        function loadArtifacts() {
+            const list = document.getElementById('artifactsList');
+            const items = Object.values(artifacts).slice(0, 10);
+            list.innerHTML = items.map(a => {
+                const icon = a.type==='html'?'📱':a.type==='mermaid'?'📊':'💻';
+                return `
+                    <div class="list-item" onclick="goToArtifact('${a.id}')">
+                        <span>${icon}</span>
+                        <span class="item-text">${a.title}</span>
+                        <button class="item-dots" onclick="event.stopPropagation();showMenu('a${a.id}')">⋮</button>
+                        <div class="dropdown" id="menua${a.id}">
+                            <button class="dropdown-btn" onclick="editArtifact('${a.id}')">✏️ Edit</button>
+                            <button class="dropdown-btn" onclick="goToArtifact('${a.id}')">💬 Go to Chat</button>
+                            <button class="dropdown-btn" onclick="dlArtifact('${a.id}')">📥 Download</button>
+                            <button class="dropdown-btn" onclick="delArtifact('${a.id}')">🗑️ Delete</button>
                         </div>
                     </div>
-                    <div class="artifact-content">
-                        ${contentHTML}
-                    </div>
-                </div>
-            `;
+                `;
+            }).join('') || '<div style="padding:8px;opacity:0.6;font-size:12px;">No artifacts</div>';
         }
 
-        function renderArtifact(artifact, id) {
-            const copyBtn = `<button class="artifact-btn" onclick="copyArtifact('${id}')">📋 Copy</button>`;
-            const downloadBtn = `<button class="artifact-btn" onclick="downloadArtifact('${id}')">📥 Download</button>`;
-            const openBtn = `<button class="artifact-btn" onclick="openArtifactFullscreen('${id}')">🔍 Open</button>`;
-            
-            let contentHTML = '';
-            
-            switch (artifact.type) {
-                case 'html':
-                    const escapedHTML = artifact.content.replace(/"/g, '&quot;');
-                    contentHTML = `<iframe class="artifact-iframe" id="${id}" srcdoc="${escapedHTML}"></iframe>`;
-                    break;
-                    
-                case 'svg':
-                    contentHTML = `<div class="artifact-svg" id="${id}">${artifact.content}</div>`;
-                    break;
-                    
-                case 'mermaid':
-                    const mermaidId = 'mermaid-' + id;
-                    contentHTML = `<div class="artifact-content" style="padding: 30px; background: white; display: flex; justify-content: center;"><div class="mermaid" id="${mermaidId}">${artifact.content}</div></div>`;
-                    // Render mermaid diagram
-                    setTimeout(async () => {
-                        try {
-                            const element = document.getElementById(mermaidId);
-                            if (element && window.mermaid) {
-                                const { svg } = await window.mermaid.render(mermaidId + '-svg', artifact.content);
-                                element.innerHTML = svg;
-                            }
-                        } catch (e) {
-                            console.error('Mermaid render error:', e);
-                        }
-                    }, 100);
-                    break;
-                    
-                default:
-                    const escapedCode = artifact.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    contentHTML = `<div class="artifact-code" id="${id}">${escapedCode}</div>`;
-            }
-            
-            // Store artifact content for copying/downloading
-            if (!window.artifactContents) window.artifactContents = {};
-            window.artifactContents[id] = artifact.content;
-            
-            return `
-                <div class="artifact-container" id="container-${id}">
-                    <div class="artifact-header">
-                        <div class="artifact-title">${artifact.title}</div>
-                        <div class="artifact-actions">
-                            ${copyBtn}
-                            ${openBtn}
-                            ${downloadBtn}
-                        </div>
-                    </div>
-                    <div class="artifact-content">
-                        ${contentHTML}
-                    </div>
-                </div>
-            `;
+        function showMenu(id) {
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            document.getElementById('menu' + id)?.classList.add('show');
         }
 
-        function copyArtifact(id) {
-            if (window.artifactContents && window.artifactContents[id]) {
-                navigator.clipboard.writeText(window.artifactContents[id]);
-                alert('✅ Copied to clipboard!');
-            }
-        }
-
-        function downloadArtifact(id) {
-            if (window.artifactContents && window.artifactContents[id]) {
-                const content = window.artifactContents[id];
-                const blob = new Blob([content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `artifact-${Date.now()}.html`;
-                a.click();
-                URL.revokeObjectURL(url);
-            }
-        }
-
-        function openArtifactFullscreen(id) {
-            if (window.artifactContents && window.artifactContents[id]) {
-                const content = window.artifactContents[id];
-                const newWindow = window.open('', '_blank');
-                newWindow.document.write(content);
-                newWindow.document.close();
-            }
-        }
-
-        // STREAMING for regular chat
-        async function sendRegularMessage() {
-            const input = document.getElementById('regularChatInput');
-            const prompt = input.value.trim();
-            
-            if (!apiKey) {
-                openSettings();
-                return;
-            }
-
-            if (!prompt) return;
-
-            addRegularMessage('user', prompt);
-            input.value = '';
-            
-            const sendBtn = document.getElementById('regularSendBtn');
-            sendBtn.disabled = true;
-
-            // Create streaming message
-            const messagesDiv = document.getElementById('regularMessages');
-            const streamDiv = document.createElement('div');
-            streamDiv.className = 'message assistant';
-            streamDiv.id = 'streamingMessage';
-            streamDiv.innerHTML = `
-                <div class="message-label">Feren AI</div>
-                <div class="message-content" id="streamingContent"><span class="streaming-cursor"></span></div>
-            `;
-            messagesDiv.appendChild(streamDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            const contentDiv = document.getElementById('streamingContent');
-            let fullResponse = '';
-
-            try {
-                // Try streaming first
-                let streamWorked = false;
-                
-                try {
-                    const response = await fetch('/api/stream', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            apiKey: apiKey,
-                            model: currentModel,
-                            messages: [{ 
-                                role: 'user', 
-                                content: `${prompt}
-
-When appropriate, create artifacts (code blocks) for:
-- HTML/web apps (use \`\`\`html)
-- Code snippets (use \`\`\`javascript, \`\`\`python, etc.)
-- SVG images (use \`\`\`svg)
-- Diagrams (use \`\`\`mermaid)`
-                            }]
-                        })
-                    });
-
-                    if (response.ok) {
-                        const reader = response.body.getReader();
-                        const decoder = new TextDecoder();
-
-                        while (true) {
-                            const { done, value } = await reader.read();
-                            if (done) break;
-
-                            const chunk = decoder.decode(value);
-                            const lines = chunk.split('\n');
-
-                            for (const line of lines) {
-                                if (line.startsWith('data: ')) {
-                                    const data = line.slice(6);
-                                    if (data === '[DONE]') continue;
-
-                                    try {
-                                        const parsed = JSON.parse(data);
-                                        
-                                        if (parsed.type === 'content_block_delta') {
-                                            const text = parsed.delta?.text || '';
-                                            fullResponse += text;
-                                            contentDiv.innerHTML = fullResponse + '<span class="streaming-cursor"></span>';
-                                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                                        }
-
-                                        if (parsed.type === 'message_delta' && parsed.usage) {
-                                            updateUsage(parsed.usage.input_tokens || 0, parsed.usage.output_tokens || 0);
-                                        }
-                                    } catch (e) {}
-                                }
-                            }
-                        }
-                        streamWorked = true;
-                    }
-                } catch (streamError) {
-                    console.log('Streaming failed, falling back to regular API:', streamError);
-                }
-
-                // Fallback to non-streaming if streaming failed
-                if (!streamWorked || !fullResponse) {
-                    contentDiv.innerHTML = 'Generating response...<span class="streaming-cursor"></span>';
-                    
-                    const response = await fetch('/api/anthropic', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            apiKey: apiKey,
-                            messages: [{ role: 'user', content: prompt }],
-                            max_tokens: 2048
-                        })
-                    });
-
-                    const data = await response.json();
-                    fullResponse = data.content[0].text;
-                    
-                    if (data.usage) {
-                        updateUsage(data.usage.input_tokens || 0, data.usage.output_tokens || 0);
-                    }
-                }
-
-                // Remove cursor and display final response
-                contentDiv.innerHTML = fullResponse;
-                
-                // Parse and render artifacts
-                streamDiv.remove();
-                addRegularMessage('assistant', fullResponse);
-
-            } catch (error) {
-                contentDiv.innerHTML = `❌ Error: ${error.message}`;
-            } finally {
-                sendBtn.disabled = false;
-            }
-        }
-
-        // Feren Agent (App Builder)
-        function openFerenAgent() {
-            currentView = 'builder';
-            document.getElementById('regularChatView').style.display = 'none';
-            document.getElementById('ferenAgentView').style.display = 'flex';
-            document.getElementById('ferenAgentBtn').classList.add('active');
-        }
-
-        function addBuilderMessage(role, content) {
-            const messagesDiv = document.getElementById('builderMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
-            messageDiv.innerHTML = `
-                <div class="message-label">${role === 'user' ? 'You' : 'Feren AI'}</div>
-                <div class="message-content">${content}</div>
-            `;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        async function buildApp() {
-            const prompt = document.getElementById('builderInput').value.trim();
-            
-            if (!apiKey) {
-                openSettings();
-                return;
-            }
-
-            if (!prompt) return;
-
-            addBuilderMessage('user', prompt);
-            document.getElementById('builderInput').value = '';
-            
-            const sendBtn = document.getElementById('builderSendBtn');
-            sendBtn.disabled = true;
-
-            // Create streaming message for code
-            const messagesDiv = document.getElementById('builderMessages');
-            const streamDiv = document.createElement('div');
-            streamDiv.className = 'message assistant';
-            streamDiv.innerHTML = `
-                <div class="message-label">Feren AI</div>
-                <div class="message-content" id="builderStreamingContent">Generating app<span class="streaming-cursor"></span></div>
-            `;
-            messagesDiv.appendChild(streamDiv);
-
-            const contentDiv = document.getElementById('builderStreamingContent');
-            let fullCode = '';
-
-            try {
-                const response = await fetch('/api/stream', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        apiKey: apiKey,
-                        messages: [{
-                            role: 'user',
-                            content: `Create complete HTML app: ${prompt}
-
-Requirements: Single file, GREEN theme (#10b981), fully functional, modern design.
-Return ONLY HTML code.`
-                        }]
-                    })
-                });
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            if (data === '[DONE]') continue;
-
-                            try {
-                                const parsed = JSON.parse(data);
-                                
-                                if (parsed.type === 'content_block_delta') {
-                                    const text = parsed.delta?.text || '';
-                                    fullCode += text;
-                                    
-                                    // Show progress
-                                    const lines = fullCode.split('\n').length;
-                                    contentDiv.innerHTML = `Generating... (${lines} lines)<span class="streaming-cursor"></span>`;
-                                }
-
-                                if (parsed.type === 'message_delta' && parsed.usage) {
-                                    updateUsage(parsed.usage.input_tokens || 0, parsed.usage.output_tokens || 0);
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                }
-
-                const cleanCode = fullCode.replace(/```html/g, '').replace(/```/g, '').trim();
-                currentAppCode = cleanCode;
-
-                contentDiv.innerHTML = '✨ App built! Check preview →';
-                updatePreview(cleanCode);
-                document.getElementById('downloadBtn').style.display = 'block';
-
-            } catch (error) {
-                contentDiv.innerHTML = `❌ Error: ${error.message}`;
-            } finally {
-                sendBtn.disabled = false;
-            }
-        }
-
-        function switchPreview(view) {
-            document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (view === 'code' && currentAppCode) {
-                const escaped = currentAppCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                document.getElementById('previewContent').innerHTML = `<div class="code-view">${escaped}</div>`;
-            } else if (currentAppCode) {
-                updatePreview(currentAppCode);
-            }
-        }
-
-        function updatePreview(html) {
-            document.getElementById('previewContent').innerHTML = 
-                `<iframe class="preview-iframe" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
-        }
-
-        function downloadApp() {
-            if (!currentAppCode) return;
-            const blob = new Blob([currentAppCode], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `feren-app-${Date.now()}.html`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function openModelSelector() {
-            document.getElementById('modelModal').style.display = 'flex';
-        }
-
-        function closeModelModal() {
-            document.getElementById('modelModal').style.display = 'none';
-        }
-
-        function selectModel(modelId, modelName) {
-            currentModel = modelId;
-            currentModelName = modelName;
-            document.getElementById('currentModel').textContent = modelName;
-            closeModelModal();
-        }
-
-        // Keyboard shortcuts
-        document.getElementById('regularChatInput')?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendRegularMessage();
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.list-item')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
             }
         });
 
-        document.getElementById('builderInput')?.addEventListener('keydown', (e) => {
+        function collapse(section) {
+            const list = document.getElementById(section + 'List');
+            const btn = document.getElementById('collapse' + section.charAt(0).toUpperCase() + section.slice(1, -1));
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                btn.textContent = '▼';
+            } else {
+                list.style.display = 'none';
+                btn.textContent = '▶';
+            }
+        }
+
+        function searchSection(section) {
+            const q = prompt('Search:');
+            if (!q) return;
+            // Implement search filter
+            alert('Search: ' + q);
+        }
+
+        function editProj(id) {
+            const name = prompt('New name:', projects[id].name);
+            if (name) {
+                projects[id].name = name;
+                localStorage.setItem('projects', JSON.stringify(projects));
+                updateUI();
+            }
+        }
+
+        function delProj(id) {
+            if (confirm('Delete project?')) {
+                delete projects[id];
+                localStorage.setItem('projects', JSON.stringify(projects));
+                updateUI();
+            }
+        }
+
+        function selectProj(id) {
+            currentProj = id;
+            updateUI();
+        }
+
+        function newChat() {
+            const id = 'c' + Date.now();
+            chats[id] = { id, title: 'New Chat', msgs: [], created: Date.now() };
+            currentChat = id;
+            localStorage.setItem('chats', JSON.stringify(chats));
+            openChat(id);
+        }
+
+        function openChat(id) {
+            currentChat = id;
+            document.getElementById('chatView').style.display = 'flex';
+            document.getElementById('builderView').style.display = 'none';
+            document.getElementById('ferenBtn').classList.remove('active');
+            
+            const msgs = document.getElementById('messages');
+            msgs.innerHTML = '';
+            
+            (chats[id].msgs || []).forEach(m => addMsg(m.role, m.content, false));
+            updateUI();
+        }
+
+        function editChat(id) {
+            const name = prompt('New title:', chats[id].title);
+            if (name) {
+                chats[id].title = name;
+                localStorage.setItem('chats', JSON.stringify(chats));
+                updateUI();
+            }
+        }
+
+        function moveChat(id) {
+            alert('Move to project: Select a project from Projects section');
+        }
+
+        function delChat(id) {
+            if (confirm('Delete chat?')) {
+                delete chats[id];
+                if (currentChat === id) newChat();
+                localStorage.setItem('chats', JSON.stringify(chats));
+                updateUI();
+            }
+        }
+
+        function addMsg(role, content, save = true) {
+            const msgs = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+            
+            // Extract artifacts
+            const parts = extractArtifacts(content);
+            
+            div.innerHTML = `
+                <div class="msg-label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div>
+                <div class="msg-text">${parts.text}</div>
+                ${parts.artifacts.map(a => createArtifact(a)).join('')}
+            `;
+            
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            if (save && currentChat) {
+                chats[currentChat].msgs.push({ role, content });
+                if (role === 'user' && chats[currentChat].msgs.length === 1) {
+                    chats[currentChat].title = content.substring(0, 35);
+                }
+                localStorage.setItem('chats', JSON.stringify(chats));
+                updateUI();
+            }
+        }
+
+        function extractArtifacts(text) {
+            const found = [];
+            let clean = text;
+            
+            const regex = /```(\w+)?\n([\s\S]*?)```/g;
+            let m;
+            
+            while (m = regex.exec(text)) {
+                const lang = m[1] || 'text';
+                const code = m[2].trim();
+                
+                if (code.length < 20) continue;
+                
+                const id = 'art' + Date.now() + Math.random().toString(36).substr(2, 5);
+                let type = 'code';
+                let title = lang.toUpperCase();
+                
+                if (lang === 'html' || code.includes('<html')) {
+                    type = 'html';
+                    title = 'App';
+                } else if (lang === 'mermaid') {
+                    type = 'mermaid';
+                    title = 'Diagram';
+                } else if (lang === 'svg' || code.includes('<svg')) {
+                    type = 'svg';
+                    title = 'SVG';
+                }
+                
+                found.push({ id, type, title, code, lang });
+                
+                // Save artifact
+                artifacts[id] = { id, type, title, content: code, chatId: currentChat, created: Date.now() };
+                localStorage.setItem('artifacts', JSON.stringify(artifacts));
+                
+                clean = clean.replace(m[0], '');
+            }
+            
+            if (found.length > 0) loadArtifacts();
+            
+            return { text: clean.trim(), artifacts: found };
+        }
+
+        function createArtifact(a) {
+            let body = '';
+            
+            if (a.type === 'html') {
+                body = `<iframe class="artifact-iframe" srcdoc="${a.code.replace(/"/g, '&quot;')}"></iframe>`;
+            } else if (a.type === 'mermaid') {
+                const mid = 'm' + Date.now();
+                body = `<div style="padding:20px;background:white;"><div class="mermaid" id="${mid}">${a.code}</div></div>`;
+                setTimeout(async () => {
+                    try {
+                        const el = document.getElementById(mid);
+                        if (el) {
+                            const { svg } = await mermaid.render(mid + 'svg', a.code);
+                            el.innerHTML = svg;
+                        }
+                    } catch (e) { console.error(e); }
+                }, 100);
+            } else if (a.type === 'svg') {
+                body = `<div style="padding:20px;background:white;display:flex;justify-content:center;">${a.code}</div>`;
+            } else {
+                const escaped = a.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                body = `<div class="artifact-code">${escaped}</div>`;
+            }
+            
+            window['artifact_' + a.id] = a.code;
+            
+            return `
+                <div class="artifact">
+                    <div class="artifact-header">
+                        <span class="artifact-title">${a.title}</span>
+                        <div class="artifact-btns">
+                            <button class="artifact-btn" onclick="copy('artifact_${a.id}')">📋 Copy</button>
+                            <button class="artifact-btn" onclick="dlCode('artifact_${a.id}', '${a.title}')">📥 Download</button>
+                        </div>
+                    </div>
+                    <div class="artifact-body">${body}</div>
+                </div>
+            `;
+        }
+
+        async function send() {
+            const input = document.getElementById('input');
+            const text = input.value.trim();
+            if (!text || !api) return;
+            
+            addMsg('user', text);
+            input.value = '';
+            
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.textContent = '...';
+            
+            try {
+                const res = await fetch('/api/anthropic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        apiKey: api,
+                        messages: [{ role: 'user', content: text }],
+                        max_tokens: 2048
+                    })
+                });
+                
+                const data = await res.json();
+                const reply = data.content[0].text;
+                
+                if (data.usage) {
+                    usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
+                    usage.calls++;
+                    usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
+                    localStorage.setItem('usage', JSON.stringify(usage));
+                    updateUI();
+                }
+                
+                addMsg('assistant', reply);
+                
+            } catch (e) {
+                addMsg('assistant', 'Error: ' + e.message);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Send';
+        }
+
+        function openBuilder() {
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('builderView').style.display = 'flex';
+            document.getElementById('ferenBtn').classList.add('active');
+        }
+
+        function copy(id) {
+            navigator.clipboard.writeText(window[id] || '');
+            alert('✅ Copied!');
+        }
+
+        function dlCode(id, name) {
+            const code = window[id] || '';
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name + '.html';
+            a.click();
+        }
+
+        function shareChat() {
+            alert('Share link copied!');
+        }
+
+        function downloadChat() {
+            const chat = chats[currentChat];
+            if (!chat) return;
+            let md = '# ' + chat.title + '\n\n';
+            chat.msgs.forEach(m => {
+                md += `## ${m.role === 'user' ? 'You' : 'Feren AI'}\n${m.content}\n\n`;
+            });
+            const blob = new Blob([md], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chat.md';
+            a.click();
+        }
+
+        function editArtifact(id) {
+            const name = prompt('New name:', artifacts[id].title);
+            if (name) {
+                artifacts[id].title = name;
+                localStorage.setItem('artifacts', JSON.stringify(artifacts));
+                updateUI();
+            }
+        }
+
+        function goToArtifact(id) {
+            const a = artifacts[id];
+            if (a && a.chatId && chats[a.chatId]) {
+                openChat(a.chatId);
+            }
+        }
+
+        function dlArtifact(id) {
+            const a = artifacts[id];
+            if (a) {
+                const blob = new Blob([a.content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = a.title + '.html';
+                link.click();
+            }
+        }
+
+        function delArtifact(id) {
+            if (confirm('Delete artifact?')) {
+                delete artifacts[id];
+                localStorage.setItem('artifacts', JSON.stringify(artifacts));
+                updateUI();
+            }
+        }
+
+        document.getElementById('input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                buildApp();
+                send();
             }
         });
     </script>
