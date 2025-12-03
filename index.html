@@ -1,53 +1,614 @@
-// api/anthropic.js
-// Fast single-endpoint for Abacus-style builder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI App Builder - Deep Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #0a0e27;
+            color: #fff;
+        }
 
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+        /* LEFT PANE - CHAT */
+        .chat-pane {
+            width: 400px;
+            background: #0f1425;
+            border-right: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
 
-  try {
-    const { apiKey, messages, max_tokens } = req.body;
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 1px solid #1e293b;
+        }
 
-    if (!apiKey || !messages) {
-      return res.status(400).json({ error: 'Missing apiKey or messages' });
-    }
+        .chat-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
 
-    // Call Anthropic API
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: max_tokens || 4096,
-        messages: messages
-      })
-    });
+        .chat-header p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
 
-    const data = await response.json();
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
 
-    if (!response.ok) {
-      return res.status(response.status).json(data);
-    }
+        .message {
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
 
-    return res.status(200).json(data);
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-  } catch (error) {
-    console.error('API Error:', error);
-    return res.status(500).json({ error: error.message });
-  }
-}
+        .message.user {
+            background: #1e293b;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
+        }
+
+        .message.assistant {
+            background: #0a0e27;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-left: 3px solid #764ba2;
+        }
+
+        .message-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            opacity: 0.6;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #1e293b;
+            border-radius: 12px;
+            border-left: 3px solid #764ba2;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .loading-dot {
+            width: 6px;
+            height: 6px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .input-area {
+            padding: 20px;
+            background: #0a0e27;
+            border-top: 1px solid #1e293b;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        #promptInput {
+            flex: 1;
+            padding: 12px 16px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        #promptInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #buildBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        #buildBtn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #buildBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .examples {
+            margin-top: 12px;
+        }
+
+        .example-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #334155;
+            color: #fff;
+            border-color: #667eea;
+        }
+
+        /* RIGHT PANE - PREVIEW */
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+        }
+
+        .preview-header {
+            padding: 16px 20px;
+            background: #0a0e27;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #334155;
+            color: #fff;
+        }
+
+        .preview-content {
+            flex: 1;
+            position: relative;
+            background: #fff;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-top: 8px;
+        }
+
+        .api-key-banner {
+            padding: 12px 20px;
+            background: #fbbf24;
+            color: #78350f;
+            font-size: 13px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .api-key-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            background: #0f1425;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: #334155;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <!-- API Key Banner -->
+    <div id="apiKeyBanner" class="api-key-banner">
+        🔑 Click here to set your Anthropic API key
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="api-key-modal">
+        <div class="modal-content">
+            <h2>Set API Key</h2>
+            <p style="font-size: 14px; color: #94a3b8; margin-bottom: 16px;">
+                Enter your Anthropic API key to start building apps
+            </p>
+            <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeApiKeyModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="saveApiKey()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- LEFT: Chat Pane -->
+        <div class="chat-pane">
+            <div class="chat-header">
+                <h1>🤖 Deep Agent</h1>
+                <p>Build apps with AI instantly</p>
+            </div>
+
+            <div class="messages" id="messages"></div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="promptInput" 
+                        placeholder="Describe the app you want to build..."
+                        rows="2"
+                    ></textarea>
+                    <button id="buildBtn" onclick="buildApp()">Build</button>
+                </div>
+                <div class="examples">
+                    <div class="example-btn" onclick="setPrompt('Simple calculator')">Calculator</div>
+                    <div class="example-btn" onclick="setPrompt('Todo list app')">Todo List</div>
+                    <div class="example-btn" onclick="setPrompt('Timer countdown')">Timer</div>
+                    <div class="example-btn" onclick="setPrompt('Color picker tool')">Color Picker</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Preview Pane -->
+        <div class="preview-pane">
+            <div class="preview-header">
+                <div class="preview-title">Live Preview</div>
+                <div class="preview-actions">
+                    <button class="action-btn" onclick="downloadApp()" id="downloadBtn" style="display: none;">
+                        📥 Download
+                    </button>
+                    <button class="action-btn" onclick="refreshPreview()">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="preview-content" id="previewContent">
+                <div class="empty-state">
+                    <div class="empty-icon">🚀</div>
+                    <div class="empty-text">Ready to build</div>
+                    <div class="empty-subtext">Describe your app in the chat to get started</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAppCode = '';
+        let apiKey = localStorage.getItem('anthropic_api_key');
+
+        // Show/hide API key banner
+        if (apiKey) {
+            document.getElementById('apiKeyBanner').style.display = 'none';
+        }
+
+        document.getElementById('apiKeyBanner').onclick = () => {
+            document.getElementById('apiKeyModal').style.display = 'flex';
+        };
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').style.display = 'none';
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (key) {
+                apiKey = key;
+                localStorage.setItem('anthropic_api_key', key);
+                document.getElementById('apiKeyBanner').style.display = 'none';
+                closeApiKeyModal();
+                addMessage('assistant', '✅ API key saved! You can now build apps.');
+            }
+        }
+
+        function setPrompt(text) {
+            document.getElementById('promptInput').value = text;
+        }
+
+        function addMessage(role, content) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `
+                <div class="message-label">${role === 'user' ? 'You' : 'Deep Agent'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showLoading() {
+            const messagesDiv = document.getElementById('messages');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.id = 'loading';
+            loadingDiv.innerHTML = `
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                <span>Generating your app...</span>
+            `;
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            if (loading) loading.remove();
+        }
+
+        async function buildApp() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            
+            if (!apiKey) {
+                document.getElementById('apiKeyModal').style.display = 'flex';
+                return;
+            }
+
+            if (!prompt) {
+                alert('Please describe what you want to build');
+                return;
+            }
+
+            // Add user message
+            addMessage('user', prompt);
+            document.getElementById('promptInput').value = '';
+            
+            // Disable button
+            const buildBtn = document.getElementById('buildBtn');
+            buildBtn.disabled = true;
+            
+            // Show loading
+            showLoading();
+
+            try {
+                const response = await fetch('/api/anthropic', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey,
+                        messages: [{
+                            role: 'user',
+                            content: `Create a complete, working single-file HTML app for: ${prompt}
+
+CRITICAL REQUIREMENTS:
+1. Must be a COMPLETE, SELF-CONTAINED HTML file
+2. Include ALL CSS in <style> tags
+3. Include ALL JavaScript in <script> tags
+4. Use modern, beautiful design (gradients, animations, shadows)
+5. Make it fully functional - no placeholders
+6. Use proper event listeners (no inline onclick)
+7. Add smooth animations and transitions
+8. Make it responsive
+9. Use a modern color scheme
+
+Return ONLY the complete HTML code, nothing else. No explanations, no markdown.`
+                        }],
+                        max_tokens: 4096
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to generate app');
+                }
+
+                const data = await response.json();
+                let code = data.content[0].text;
+
+                // Clean up code
+                code = code.replace(/```html/g, '').replace(/```/g, '').trim();
+                
+                currentAppCode = code;
+
+                // Hide loading
+                hideLoading();
+
+                // Add assistant message
+                addMessage('assistant', '✨ App generated successfully! Check the preview →');
+
+                // Update preview
+                updatePreview(code);
+
+                // Show download button
+                document.getElementById('downloadBtn').style.display = 'block';
+
+            } catch (error) {
+                hideLoading();
+                addMessage('assistant', `❌ Error: ${error.message}`);
+            } finally {
+                buildBtn.disabled = false;
+            }
+        }
+
+        function updatePreview(html) {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = `<iframe class="preview-iframe" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
+        }
+
+        function refreshPreview() {
+            if (currentAppCode) {
+                updatePreview(currentAppCode);
+                addMessage('assistant', '🔄 Preview refreshed');
+            }
+        }
+
+        function downloadApp() {
+            if (!currentAppCode) return;
+            
+            const blob = new Blob([currentAppCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `app-${Date.now()}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addMessage('assistant', '📥 App downloaded! Open it in your browser.');
+        }
+
+        // Enter to send
+        document.getElementById('promptInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                buildApp();
+            }
+        });
+    </script>
+</body>
+</html>
