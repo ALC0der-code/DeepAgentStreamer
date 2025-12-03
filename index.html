@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feren AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    </script>
     <style>
         * {
             margin: 0;
@@ -119,28 +123,25 @@
 
         .item-menu-trigger {
             margin-left: auto;
-            width: 24px;
-            height: 24px;
-            background: transparent;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.25);
             border: none;
-            color: rgba(255, 255, 255, 0.6);
+            color: white;
             cursor: pointer;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            opacity: 0;
-        }
-
-        .nav-item:hover .item-menu-trigger {
-            opacity: 1;
         }
 
         .item-menu-trigger:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.4);
             color: white;
+            transform: scale(1.1);
         }
 
         .item-dropdown {
@@ -340,8 +341,10 @@
 
         .chat-messages {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: auto !important;
+            overflow-x: hidden;
             padding: 40px 24px;
+            scroll-behavior: smooth;
         }
 
         .message {
@@ -382,6 +385,33 @@
             font-size: 15px;
             line-height: 1.7;
             color: #1f2937;
+            white-space: pre-wrap;
+        }
+
+        .message-content p {
+            margin-bottom: 12px;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 8px 0 12px 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 4px;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .message-content code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            color: #059669;
         }
 
         /* ARTIFACTS */
@@ -436,8 +466,9 @@
 
         .artifact-content {
             padding: 0;
-            max-height: 500px;
+            max-height: 600px;
             overflow: auto;
+            background: white;
         }
 
         .artifact-iframe {
@@ -1175,18 +1206,21 @@
             messageDiv.className = `message ${role}`;
             
             // Parse content for artifacts
-            const { text, artifacts } = parseArtifacts(content);
+            const { text, artifacts: foundArtifacts } = parseArtifacts(content);
+            
+            // Format the text nicely
+            const formattedText = formatMessageText(text);
             
             let artifactsHTML = '';
-            if (artifacts.length > 0) {
-                artifactsHTML = artifacts.map((artifact, idx) => {
-                    return renderArtifact(artifact, `artifact-${Date.now()}-${idx}`);
+            if (foundArtifacts.length > 0) {
+                artifactsHTML = foundArtifacts.map((artifact, idx) => {
+                    return renderArtifact(artifact, artifact.id);
                 }).join('');
             }
             
             messageDiv.innerHTML = `
                 <div class="message-label">${role === 'user' ? 'You' : 'Feren AI'}</div>
-                <div class="message-content">${text}</div>
+                <div class="message-content">${formattedText}</div>
                 ${artifactsHTML}
             `;
             messagesDiv.appendChild(messageDiv);
@@ -1200,6 +1234,19 @@
                 localStorage.setItem('feren_chats', JSON.stringify(chats));
                 loadChatsList();
             }
+        }
+
+        function formatMessageText(text) {
+            // Convert markdown-style formatting to HTML
+            text = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+                .replace(/##\s+(.*?)(\n|$)/g, '<h3 style="font-size: 16px; font-weight: 600; color: #065f46; margin: 12px 0 8px;">$1</h3>') // Headers
+                .replace(/\n\n/g, '</p><p>') // Paragraphs
+                .replace(/\n-\s/g, '\n• ') // Bullet points
+                .replace(/^\d+\.\s/gm, ''); // Remove numbered list markers
+            
+            return '<p>' + text + '</p>';
         }
 
         function parseArtifacts(content) {
@@ -1325,10 +1372,18 @@
                     break;
                     
                 case 'mermaid':
-                    contentHTML = `<div class="artifact-content" id="${id}" style="padding: 20px; background: white;"><pre class="mermaid">${artifact.content}</pre></div>`;
-                    setTimeout(() => {
-                        if (window.mermaid) {
-                            window.mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                    const mermaidId = 'mermaid-' + id;
+                    contentHTML = `<div class="artifact-content" style="padding: 30px; background: white; display: flex; justify-content: center;"><div class="mermaid" id="${mermaidId}">${artifact.content}</div></div>`;
+                    // Render mermaid diagram
+                    setTimeout(async () => {
+                        try {
+                            const element = document.getElementById(mermaidId);
+                            if (element && window.mermaid) {
+                                const { svg } = await window.mermaid.render(mermaidId + '-svg', artifact.content);
+                                element.innerHTML = svg;
+                            }
+                        } catch (e) {
+                            console.error('Mermaid render error:', e);
                         }
                     }, 100);
                     break;
