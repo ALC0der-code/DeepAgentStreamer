@@ -251,6 +251,12 @@
             gap: 8px;
             font-size: 13px;
             color: #065f46;
+            transition: all 0.2s;
+        }
+
+        .model-select:hover {
+            background: #ecfdf5;
+            border-color: #10b981;
         }
 
         .header-actions {
@@ -746,10 +752,10 @@
             <!-- CHAT VIEW -->
             <div id="chatView" style="display:flex; flex-direction:column; height:100%;">
                 <div class="main-header">
-                    <div class="model-select" onclick="openModal('model')">
+                    <div class="model-select" onclick="openModal('model')" style="cursor: pointer;">
                         <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">C</span>
                         <span id="modelName">Claude Sonnet 4.5</span>
-                        <span style="font-size:10px;">▼</span>
+                        <span style="font-size:10px;color:#6b7280;">▼</span>
                     </div>
                     <div class="header-actions">
                         <button class="header-btn" onclick="shareChat()">🔗 Share</button>
@@ -774,14 +780,14 @@
                     <div class="builder-msgs" id="builderMsgs"></div>
                     <div class="builder-input">
                         <textarea id="builderInput" class="builder-text" placeholder="Describe your app..."></textarea>
-                        <button class="builder-send" onclick="build()">Build App</button>
+                        <button class="builder-send" onclick="buildApp()">Build App</button>
                     </div>
                 </div>
                 <div class="preview">
                     <div class="preview-header">
                         <div class="preview-tabs">
-                            <button class="tab active" onclick="viewTab('preview')">👁️ Preview</button>
-                            <button class="tab" onclick="viewTab('code')">💻 Code</button>
+                            <button class="tab active" onclick="switchPreviewTab('preview')">👁️ Preview</button>
+                            <button class="tab" onclick="switchPreviewTab('code')">💻 Code</button>
                         </div>
                         <button class="header-btn" id="dlBtn" onclick="downloadApp()" style="display:none;">📥 Download</button>
                     </div>
@@ -851,11 +857,20 @@
         }
 
         function openModal(type) {
-            document.getElementById(type + 'Modal').classList.add('show');
+            console.log('Opening modal:', type);
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.classList.add('show');
+            } else {
+                console.error('Modal not found:', type + 'Modal');
+            }
         }
 
         function closeModal(type) {
-            document.getElementById(type + 'Modal').classList.remove('show');
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
         }
 
         function saveSettings() {
@@ -1264,7 +1279,10 @@
                 streamDiv.remove();
                 addMsg('assistant', fullResponse);
                 
+                console.log('✅ Message saved to chat:', currentChat);
+                
             } catch (e) {
+                console.error('Send error:', e);
                 streamDiv.remove();
                 addMsg('assistant', 'Error: ' + e.message);
             }
@@ -1383,6 +1401,13 @@
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 send();
+            }
+        });
+
+        // Add click handler debug
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.model-select')) {
+                console.log('Model selector clicked');
             }
         });
     </script>
