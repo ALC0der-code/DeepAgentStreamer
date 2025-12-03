@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI App Builder - Deep Agent</title>
+    <title>Feren AI</title>
     <style>
         * {
             margin: 0;
@@ -15,49 +15,328 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             height: 100vh;
             overflow: hidden;
-            background: #0a0e27;
-            color: #fff;
+            background: #f8fffe;
         }
 
-        .container {
+        .app-container {
             display: flex;
             height: 100vh;
         }
 
-        /* LEFT PANE - CHAT */
-        .chat-pane {
-            width: 400px;
-            background: #0f1425;
-            border-right: 1px solid #1e293b;
+        /* LEFT SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-item {
+            padding: 10px 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+
+        .item-icon {
+            font-size: 16px;
+        }
+
+        .item-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .feren-agent-btn {
+            margin: 20px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .feren-agent-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .feren-agent-btn.active {
+            background: white;
+            color: #10b981;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f0fdf4;
+        }
+
+        .main-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid #d1fae5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 14px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            color: #059669;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+
+        /* CONTENT AREA */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* PROJECTS VIEW */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .project-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #d1fae5;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .project-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .project-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+
+        .project-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* CHATS VIEW */
+        .chats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #d1fae5;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chat-card:hover {
+            border-color: #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+        }
+
+        .chat-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 6px;
+        }
+
+        .chat-card-preview {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chat-card-meta {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* FEREN AGENT VIEW (BUILDER) */
+        .builder-container {
+            display: flex;
+            height: 100%;
+            gap: 0;
+            background: #f0fdf4;
+        }
+
+        .chat-panel {
+            width: 420px;
+            background: white;
+            border-right: 1px solid #d1fae5;
             display: flex;
             flex-direction: column;
         }
 
-        .chat-header {
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-bottom: 1px solid #1e293b;
-        }
-
-        .chat-header h1 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .chat-header p {
-            font-size: 13px;
-            opacity: 0.8;
-        }
-
-        .messages {
+        .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
         }
 
         .message {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             animation: slideIn 0.3s ease;
         }
 
@@ -67,31 +346,31 @@
         }
 
         .message.user {
-            background: #1e293b;
+            background: #ecfdf5;
             padding: 12px 16px;
             border-radius: 12px;
-            border-left: 3px solid #667eea;
+            border-left: 3px solid #10b981;
         }
 
         .message.assistant {
-            background: #0a0e27;
+            background: #f9fafb;
             padding: 12px 16px;
             border-radius: 12px;
-            border-left: 3px solid #764ba2;
+            border-left: 3px solid #059669;
         }
 
         .message-label {
             font-size: 11px;
             text-transform: uppercase;
             font-weight: 600;
-            opacity: 0.6;
+            color: #10b981;
             margin-bottom: 6px;
-            letter-spacing: 0.5px;
         }
 
         .message-content {
             font-size: 14px;
             line-height: 1.6;
+            color: #1f2937;
         }
 
         .loading {
@@ -99,9 +378,9 @@
             align-items: center;
             gap: 8px;
             padding: 12px 16px;
-            background: #1e293b;
+            background: #ecfdf5;
             border-radius: 12px;
-            border-left: 3px solid #764ba2;
+            border-left: 3px solid #10b981;
         }
 
         .loading-dots {
@@ -112,7 +391,7 @@
         .loading-dot {
             width: 6px;
             height: 6px;
-            background: #667eea;
+            background: #10b981;
             border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
         }
@@ -126,126 +405,96 @@
         }
 
         .input-area {
-            padding: 20px;
-            background: #0a0e27;
-            border-top: 1px solid #1e293b;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #d1fae5;
         }
 
         .input-wrapper {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         #promptInput {
             flex: 1;
-            padding: 12px 16px;
-            background: #1e293b;
-            border: 1px solid #334155;
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
+            color: #1f2937;
+            font-size: 13px;
             resize: none;
             font-family: inherit;
         }
 
         #promptInput:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #10b981;
+            background: white;
         }
 
-        #buildBtn {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .send-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none;
             border-radius: 8px;
             color: white;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        #buildBtn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        #buildBtn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .examples {
-            margin-top: 12px;
-        }
-
-        .example-btn {
-            display: inline-block;
-            padding: 6px 12px;
-            margin: 4px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #94a3b8;
-            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .example-btn:hover {
-            background: #334155;
-            color: #fff;
-            border-color: #667eea;
+        .send-btn:disabled {
+            opacity: 0.5;
         }
 
-        /* RIGHT PANE - PREVIEW */
-        .preview-pane {
+        /* PREVIEW PANEL */
+        .preview-panel {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #000;
+            background: white;
         }
 
         .preview-header {
-            padding: 16px 20px;
-            background: #0a0e27;
-            border-bottom: 1px solid #1e293b;
+            padding: 12px 20px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .preview-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-
-        .preview-actions {
+        .preview-tabs {
             display: flex;
-            gap: 8px;
+            gap: 4px;
         }
 
-        .action-btn {
+        .preview-tab {
             padding: 6px 12px;
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: white;
+            border: 1px solid #e5e7eb;
             border-radius: 6px;
-            color: #94a3b8;
             font-size: 12px;
+            color: #6b7280;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .action-btn:hover {
-            background: #334155;
-            color: #fff;
+        .preview-tab.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .preview-tab:hover:not(.active) {
+            background: #f3f4f6;
+            color: #10b981;
         }
 
         .preview-content {
             flex: 1;
-            position: relative;
-            background: #fff;
+            background: white;
         }
 
         .preview-iframe {
@@ -254,13 +503,25 @@
             border: none;
         }
 
+        .code-view {
+            width: 100%;
+            height: 100%;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
         .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: #64748b;
+            color: #9ca3af;
         }
 
         .empty-icon {
@@ -269,61 +530,68 @@
             opacity: 0.3;
         }
 
-        .empty-text {
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .empty-subtext {
-            font-size: 14px;
-            opacity: 0.6;
-            margin-top: 8px;
-        }
-
-        .api-key-banner {
-            padding: 12px 20px;
-            background: #fbbf24;
-            color: #78350f;
-            font-size: 13px;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .api-key-modal {
+        /* MODALS */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
         .modal-content {
-            background: #1e293b;
+            background: white;
             padding: 30px;
-            border-radius: 12px;
-            max-width: 500px;
+            border-radius: 16px;
+            max-width: 480px;
             width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .modal-content h2 {
-            margin-bottom: 16px;
+        .modal-title {
             font-size: 20px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 8px;
         }
 
-        .modal-content input {
+        .modal-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
             width: 100%;
-            padding: 12px;
-            background: #0f1425;
-            border: 1px solid #334155;
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
-            color: #fff;
             font-size: 14px;
-            margin-bottom: 16px;
+            color: #1f2937;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
         }
 
         .modal-buttons {
@@ -332,140 +600,416 @@
             justify-content: flex-end;
         }
 
-        .modal-btn {
+        .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .modal-btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-primary {
+            background: #10b981;
             color: white;
         }
 
-        .modal-btn.secondary {
-            background: #334155;
-            color: #94a3b8;
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
-    <!-- API Key Banner -->
-    <div id="apiKeyBanner" class="api-key-banner">
-        🔑 Click here to set your Anthropic API key
-    </div>
-
-    <!-- API Key Modal -->
-    <div id="apiKeyModal" class="api-key-modal">
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
         <div class="modal-content">
-            <h2>Set API Key</h2>
-            <p style="font-size: 14px; color: #94a3b8; margin-bottom: 16px;">
-                Enter your Anthropic API key to start building apps
-            </p>
-            <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+            <div class="modal-title">⚙️ Settings</div>
+            <div class="modal-subtitle">Configure Feren AI</div>
+            <div class="form-group">
+                <label class="form-label">Anthropic API Key</label>
+                <input type="password" id="apiKeyInput" class="form-input" placeholder="sk-ant-api03-...">
+            </div>
             <div class="modal-buttons">
-                <button class="modal-btn secondary" onclick="closeApiKeyModal()">Cancel</button>
-                <button class="modal-btn primary" onclick="saveApiKey()">Save</button>
+                <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- LEFT: Chat Pane -->
-        <div class="chat-pane">
-            <div class="chat-header">
-                <h1>🤖 Deep Agent</h1>
-                <p>Build apps with AI instantly</p>
+    <!-- New Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📁 New Project</div>
+            <div class="modal-subtitle">Create a new project</div>
+            <div class="form-group">
+                <label class="form-label">Project Name</label>
+                <input type="text" id="projectNameInput" class="form-input" placeholder="My App Project">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createProject()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🌿</div>
+                    <div class="logo-text">Feren AI</div>
+                </div>
             </div>
 
-            <div class="messages" id="messages"></div>
+            <div class="sidebar-nav">
+                <!-- Projects Section -->
+                <div class="nav-section">
+                    <div class="section-header">
+                        <span>Projects</span>
+                        <div class="section-actions">
+                            <button class="icon-btn" onclick="searchProjects()">🔍</button>
+                            <button class="icon-btn" onclick="openProjectModal()">+</button>
+                            <button class="icon-btn" onclick="toggleProjects()">▼</button>
+                        </div>
+                    </div>
+                    <div id="projectsList"></div>
+                </div>
 
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <textarea 
-                        id="promptInput" 
-                        placeholder="Describe the app you want to build..."
-                        rows="2"
-                    ></textarea>
-                    <button id="buildBtn" onclick="buildApp()">Build</button>
+                <!-- Chats Section -->
+                <div class="nav-section">
+                    <div class="section-header">
+                        <span>Chats</span>
+                        <div class="section-actions">
+                            <button class="icon-btn" onclick="searchChats()">🔍</button>
+                            <button class="icon-btn" onclick="newChat()">+</button>
+                            <button class="icon-btn" onclick="toggleChats()">▲</button>
+                        </div>
+                    </div>
+                    <div id="chatsList"></div>
                 </div>
-                <div class="examples">
-                    <div class="example-btn" onclick="setPrompt('Simple calculator')">Calculator</div>
-                    <div class="example-btn" onclick="setPrompt('Todo list app')">Todo List</div>
-                    <div class="example-btn" onclick="setPrompt('Timer countdown')">Timer</div>
-                    <div class="example-btn" onclick="setPrompt('Color picker tool')">Color Picker</div>
-                </div>
+            </div>
+
+            <!-- Feren Agent Button -->
+            <button class="feren-agent-btn" id="ferenAgentBtn" onclick="openFerenAgent()">
+                <span>🤖</span>
+                <span>FerenAgent</span>
+            </button>
+
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="openSettings()">
+                    <span>⚙️</span>
+                    <span>Settings</span>
+                </button>
             </div>
         </div>
 
-        <!-- RIGHT: Preview Pane -->
-        <div class="preview-pane">
-            <div class="preview-header">
-                <div class="preview-title">Live Preview</div>
-                <div class="preview-actions">
-                    <button class="action-btn" onclick="downloadApp()" id="downloadBtn" style="display: none;">
-                        📥 Download
-                    </button>
-                    <button class="action-btn" onclick="refreshPreview()">
-                        🔄 Refresh
-                    </button>
+        <!-- MAIN CONTENT -->
+        <div class="main-content" id="mainContent">
+            <!-- Projects View -->
+            <div id="projectsView" style="display: none;">
+                <div class="main-header">
+                    <div class="page-title">📁 Projects</div>
+                    <div class="header-actions">
+                        <button class="action-btn" onclick="openProjectModal()">+ New Project</button>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <div class="projects-grid" id="projectsGrid"></div>
                 </div>
             </div>
-            <div class="preview-content" id="previewContent">
-                <div class="empty-state">
-                    <div class="empty-icon">🚀</div>
-                    <div class="empty-text">Ready to build</div>
-                    <div class="empty-subtext">Describe your app in the chat to get started</div>
+
+            <!-- Chats View -->
+            <div id="chatsView" style="display: none;">
+                <div class="main-header">
+                    <div class="page-title">💬 All Chats</div>
+                    <div class="header-actions">
+                        <button class="action-btn" onclick="newChat()">+ New Chat</button>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <div class="chats-list" id="chatsGrid"></div>
+                </div>
+            </div>
+
+            <!-- Feren Agent Builder View -->
+            <div id="ferenAgentView" class="builder-container">
+                <div class="chat-panel">
+                    <div class="chat-messages" id="messages"></div>
+                    <div class="input-area">
+                        <div class="input-wrapper">
+                            <textarea id="promptInput" placeholder="Describe your app..." rows="2"></textarea>
+                            <button class="send-btn" id="sendBtn" onclick="buildApp()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-panel">
+                    <div class="preview-header">
+                        <div class="preview-tabs">
+                            <div class="preview-tab active" onclick="switchView('preview')">👁️ Preview</div>
+                            <div class="preview-tab" onclick="switchView('code')">💻 Code</div>
+                        </div>
+                        <div class="preview-actions">
+                            <button class="action-btn" onclick="downloadApp()" id="downloadBtn" style="display: none;">📥 Download</button>
+                        </div>
+                    </div>
+                    <div class="preview-content" id="previewContent">
+                        <div class="empty-state">
+                            <div class="empty-icon">🌿</div>
+                            <div>Describe your app to get started</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        let apiKey = localStorage.getItem('feren_api_key');
+        let currentView = 'feren-agent';
+        let currentChatId = null;
+        let currentProjectId = null;
         let currentAppCode = '';
-        let apiKey = localStorage.getItem('anthropic_api_key');
+        let chats = JSON.parse(localStorage.getItem('feren_chats') || '{}');
+        let projects = JSON.parse(localStorage.getItem('feren_projects') || '{}');
 
-        // Show/hide API key banner
-        if (apiKey) {
-            document.getElementById('apiKeyBanner').style.display = 'none';
-        }
+        init();
 
-        document.getElementById('apiKeyBanner').onclick = () => {
-            document.getElementById('apiKeyModal').style.display = 'flex';
-        };
-
-        function closeApiKeyModal() {
-            document.getElementById('apiKeyModal').style.display = 'none';
-        }
-
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                apiKey = key;
-                localStorage.setItem('anthropic_api_key', key);
-                document.getElementById('apiKeyBanner').style.display = 'none';
-                closeApiKeyModal();
-                addMessage('assistant', '✅ API key saved! You can now build apps.');
+        function init() {
+            loadProjectsList();
+            loadChatsList();
+            openFerenAgent();
+            
+            if (!apiKey) {
+                setTimeout(openSettings, 500);
             }
         }
 
+        // Navigation
+        function openFerenAgent() {
+            currentView = 'feren-agent';
+            document.getElementById('projectsView').style.display = 'none';
+            document.getElementById('chatsView').style.display = 'none';
+            document.getElementById('ferenAgentView').style.display = 'flex';
+            document.getElementById('ferenAgentBtn').classList.add('active');
+            
+            if (!currentChatId) {
+                newChat();
+            }
+        }
+
+        function showProjects() {
+            currentView = 'projects';
+            document.getElementById('projectsView').style.display = 'block';
+            document.getElementById('chatsView').style.display = 'none';
+            document.getElementById('ferenAgentView').style.display = 'none';
+            document.getElementById('ferenAgentBtn').classList.remove('active');
+            loadProjectsGrid();
+        }
+
+        function showChats() {
+            currentView = 'chats';
+            document.getElementById('projectsView').style.display = 'none';
+            document.getElementById('chatsView').style.display = 'block';
+            document.getElementById('ferenAgentView').style.display = 'none';
+            document.getElementById('ferenAgentBtn').classList.remove('active');
+            loadChatsGrid();
+        }
+
+        // Settings
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.getElementById('apiKeyInput').value = apiKey || '';
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function saveSettings() {
+            apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (apiKey) {
+                localStorage.setItem('feren_api_key', apiKey);
+                closeSettings();
+            }
+        }
+
+        // Projects
+        function openProjectModal() {
+            document.getElementById('projectModal').style.display = 'flex';
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').style.display = 'none';
+        }
+
+        function createProject() {
+            const name = document.getElementById('projectNameInput').value.trim();
+            if (name) {
+                const id = Date.now().toString();
+                projects[id] = {
+                    id, name,
+                    created: new Date().toISOString(),
+                    chats: []
+                };
+                localStorage.setItem('feren_projects', JSON.stringify(projects));
+                loadProjectsList();
+                closeProjectModal();
+            }
+        }
+
+        function loadProjectsList() {
+            const list = document.getElementById('projectsList');
+            list.innerHTML = Object.values(projects)
+                .sort((a, b) => new Date(b.created) - new Date(a.created))
+                .slice(0, 5)
+                .map(p => `
+                    <div class="nav-item ${currentProjectId === p.id ? 'active' : ''}" 
+                         onclick="selectProject('${p.id}')">
+                        <span class="item-icon">📁</span>
+                        <span class="item-text">${p.name}</span>
+                    </div>
+                `).join('') || '<div style="padding: 8px; font-size: 12px; opacity: 0.6;">No projects yet</div>';
+        }
+
+        function loadProjectsGrid() {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = Object.values(projects)
+                .sort((a, b) => new Date(b.created) - new Date(a.created))
+                .map(p => `
+                    <div class="project-card" onclick="selectProject('${p.id}')">
+                        <div class="project-icon">📁</div>
+                        <div class="project-name">${p.name}</div>
+                        <div class="project-meta">${new Date(p.created).toLocaleDateString()}</div>
+                    </div>
+                `).join('') || '<div class="empty-state"><div>No projects yet</div></div>';
+        }
+
+        function selectProject(id) {
+            currentProjectId = id;
+            loadProjectsList();
+            showProjects();
+        }
+
+        function searchProjects() {
+            showProjects();
+        }
+
+        function toggleProjects() {
+            showProjects();
+        }
+
+        // Chats
+        function newChat() {
+            currentChatId = Date.now().toString();
+            chats[currentChatId] = {
+                id: currentChatId,
+                title: 'New Chat',
+                projectId: currentProjectId,
+                created: new Date().toISOString(),
+                messages: [],
+                code: ''
+            };
+            localStorage.setItem('feren_chats', JSON.stringify(chats));
+            loadChatsList();
+            openFerenAgent();
+            document.getElementById('messages').innerHTML = '';
+            currentAppCode = '';
+        }
+
+        function loadChatsList() {
+            const list = document.getElementById('chatsList');
+            const filtered = Object.values(chats)
+                .filter(c => !currentProjectId || c.projectId === currentProjectId)
+                .sort((a, b) => new Date(b.created) - new Date(a.created))
+                .slice(0, 10);
+            
+            list.innerHTML = filtered.map(c => `
+                <div class="nav-item ${currentChatId === c.id ? 'active' : ''}" 
+                     onclick="loadChat('${c.id}')">
+                    <span class="item-icon">💬</span>
+                    <span class="item-text">${c.title}</span>
+                </div>
+            `).join('') || '<div style="padding: 8px; font-size: 12px; opacity: 0.6; color: white;">No chats yet</div>';
+        }
+
+        function loadChatsGrid() {
+            const grid = document.getElementById('chatsGrid');
+            grid.innerHTML = Object.values(chats)
+                .sort((a, b) => new Date(b.created) - new Date(a.created))
+                .map(c => `
+                    <div class="chat-card" onclick="loadChat('${c.id}')">
+                        <div class="chat-card-title">${c.title}</div>
+                        <div class="chat-card-preview">${c.messages[0]?.content.substring(0, 60) || 'No messages'}...</div>
+                        <div class="chat-card-meta">${new Date(c.created).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+        }
+
+        function loadChat(id) {
+            currentChatId = id;
+            const chat = chats[id];
+            if (!chat) return;
+            
+            openFerenAgent();
+            document.getElementById('messages').innerHTML = '';
+            
+            chat.messages.forEach(msg => {
+                addMessage(msg.role, msg.content, false);
+            });
+            
+            if (chat.code) {
+                currentAppCode = chat.code;
+                updatePreview(chat.code);
+                document.getElementById('downloadBtn').style.display = 'block';
+            }
+            
+            loadChatsList();
+        }
+
+        function searchChats() {
+            showChats();
+        }
+
+        function toggleChats() {
+            showChats();
+        }
+
+        // Messages
         function setPrompt(text) {
             document.getElementById('promptInput').value = text;
         }
 
-        function addMessage(role, content) {
+        function addMessage(role, content, save = true) {
             const messagesDiv = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
             messageDiv.innerHTML = `
-                <div class="message-label">${role === 'user' ? 'You' : 'Deep Agent'}</div>
+                <div class="message-label">${role === 'user' ? 'You' : 'Feren AI'}</div>
                 <div class="message-content">${content}</div>
             `;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            if (save && currentChatId && chats[currentChatId]) {
+                chats[currentChatId].messages.push({ role, content });
+                if (role === 'user' && chats[currentChatId].messages.length === 1) {
+                    chats[currentChatId].title = content.substring(0, 40);
+                }
+                localStorage.setItem('feren_chats', JSON.stringify(chats));
+                loadChatsList();
+            }
         }
 
         function showLoading() {
@@ -479,7 +1023,7 @@
                     <div class="loading-dot"></div>
                     <div class="loading-dot"></div>
                 </div>
-                <span>Generating your app...</span>
+                <span>Building your app...</span>
             `;
             messagesDiv.appendChild(loadingDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -494,115 +1038,98 @@
             const prompt = document.getElementById('promptInput').value.trim();
             
             if (!apiKey) {
-                document.getElementById('apiKeyModal').style.display = 'flex';
+                openSettings();
                 return;
             }
 
-            if (!prompt) {
-                alert('Please describe what you want to build');
-                return;
-            }
+            if (!prompt) return;
 
-            // Add user message
             addMessage('user', prompt);
             document.getElementById('promptInput').value = '';
             
-            // Disable button
-            const buildBtn = document.getElementById('buildBtn');
-            buildBtn.disabled = true;
-            
-            // Show loading
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
             showLoading();
 
             try {
                 const response = await fetch('/api/anthropic', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: apiKey,
                         messages: [{
                             role: 'user',
-                            content: `Create a complete, working single-file HTML app for: ${prompt}
+                            content: `Create a complete HTML app: ${prompt}
 
-CRITICAL REQUIREMENTS:
-1. Must be a COMPLETE, SELF-CONTAINED HTML file
-2. Include ALL CSS in <style> tags
-3. Include ALL JavaScript in <script> tags
-4. Use modern, beautiful design (gradients, animations, shadows)
-5. Make it fully functional - no placeholders
-6. Use proper event listeners (no inline onclick)
-7. Add smooth animations and transitions
-8. Make it responsive
-9. Use a modern color scheme
-
-Return ONLY the complete HTML code, nothing else. No explanations, no markdown.`
+Requirements: Single file, GREEN theme (#10b981), fully functional, modern design.
+Return ONLY HTML code.`
                         }],
                         max_tokens: 4096
                     })
                 });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to generate app');
-                }
-
                 const data = await response.json();
-                let code = data.content[0].text;
-
-                // Clean up code
-                code = code.replace(/```html/g, '').replace(/```/g, '').trim();
+                let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
                 
                 currentAppCode = code;
+                if (currentChatId) {
+                    chats[currentChatId].code = code;
+                    localStorage.setItem('feren_chats', JSON.stringify(chats));
+                }
 
-                // Hide loading
                 hideLoading();
-
-                // Add assistant message
-                addMessage('assistant', '✨ App generated successfully! Check the preview →');
-
-                // Update preview
+                addMessage('assistant', '✨ App ready! Check the preview →');
                 updatePreview(code);
-
-                // Show download button
                 document.getElementById('downloadBtn').style.display = 'block';
 
             } catch (error) {
                 hideLoading();
                 addMessage('assistant', `❌ Error: ${error.message}`);
             } finally {
-                buildBtn.disabled = false;
+                sendBtn.disabled = false;
+            }
+        }
+
+        // Preview
+        function switchView(view) {
+            document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'code' && currentAppCode) {
+                showCodeView(currentAppCode);
+            } else if (currentAppCode) {
+                updatePreview(currentAppCode);
             }
         }
 
         function updatePreview(html) {
-            const previewContent = document.getElementById('previewContent');
-            previewContent.innerHTML = `<iframe class="preview-iframe" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
+            document.getElementById('previewContent').innerHTML = 
+                `<iframe class="preview-iframe" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
+        }
+
+        function showCodeView(code) {
+            const escaped = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            document.getElementById('previewContent').innerHTML = 
+                `<div class="code-view">${escaped}</div>`;
         }
 
         function refreshPreview() {
             if (currentAppCode) {
                 updatePreview(currentAppCode);
-                addMessage('assistant', '🔄 Preview refreshed');
             }
         }
 
         function downloadApp() {
             if (!currentAppCode) return;
-            
             const blob = new Blob([currentAppCode], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `app-${Date.now()}.html`;
+            a.download = `feren-app-${Date.now()}.html`;
             a.click();
             URL.revokeObjectURL(url);
-            
-            addMessage('assistant', '📥 App downloaded! Open it in your browser.');
         }
 
-        // Enter to send
         document.getElementById('promptInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
