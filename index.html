@@ -514,6 +514,40 @@
     </style>
 </head>
 <body>
+    <div id="modelModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-title">🤖 Select AI Model</div>
+            <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 10px;">
+                <div onclick="selectModel('claude-sonnet-4-20250514', 'Claude Sonnet 4.5')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width: 32px; height: 32px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">C</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Sonnet 4.5</div>
+                        <div style="font-size: 11px; color: #6b7280;">Balanced speed & intelligence</div>
+                    </div>
+                </div>
+                
+                <div onclick="selectModel('claude-opus-4-20250514', 'Claude Opus 4')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width: 32px; height: 32px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">O</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Opus 4</div>
+                        <div style="font-size: 11px; color: #6b7280;">Most powerful, best for complex tasks</div>
+                    </div>
+                </div>
+                
+                <div onclick="selectModel('claude-haiku-4-20250514', 'Claude Haiku 4.5')" style="padding: 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <div style="width: 32px; height: 32px; background: #06b6d4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">H</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #065f46; margin-bottom: 2px;">Claude Haiku 4.5</div>
+                        <div style="font-size: 11px; color: #6b7280;">Fastest & most affordable</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="closeModal('model')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="settingsModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">⚙️ Settings</div>
@@ -585,9 +619,9 @@
         <div class="main">
             <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
                 <div class="header">
-                    <div class="model" onclick="alert('Model selector - coming soon!')">
+                    <div class="model" onclick="openModal('model')">
                         <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;">C</span>
-                        <span>Claude Sonnet 4.5</span>
+                        <span id="modelName">Claude Sonnet 4.5</span>
                         <span style="font-size:10px;">▼</span>
                     </div>
                     <div class="actions">
@@ -655,11 +689,23 @@
         let appCode = '';
         let uploadedImage = null;
         let uploadedImageData = null;
+        let builderContext = []; // Conversation history for iterations
+        let currentAppDescription = ''; // Track what we're building
         
         init();
         
         function init() {
             mermaid.initialize({ startOnLoad: false });
+            
+            // Load saved model preference
+            const savedModel = localStorage.getItem('selectedModel');
+            const savedModelName = localStorage.getItem('selectedModelName');
+            if (savedModel) {
+                selectedModel = savedModel;
+                selectedModelName = savedModelName;
+                document.getElementById('modelName').textContent = savedModelName;
+            }
+            
             updateAll();
             if (!api) openModal('settings');
             else newChat();
@@ -818,6 +864,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: api,
+                        model: selectedModel,
                         messages: [{ role: 'user', content: text }],
                         max_tokens: 2048
                     })
@@ -958,6 +1005,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: api,
+                        model: selectedModel,
                         messages: messages,
                         max_tokens: 4096
                     })
@@ -1014,15 +1062,38 @@
                     msgs.scrollTop = msgs.scrollHeight;
                     
                     setTimeout(() => {
+                        const appTitle = currentAppDescription || text.substring(0, 40);
+                        
                         document.getElementById('building').innerHTML = `
                             <div class="label">FEREN AI</div>
                             <div class="text">
-                                <div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ App Built Successfully!</div>
-                                <div style="font-size:13px;color:#6b7280;">
+                                <div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ ${isIteration ? 'App Updated' : 'App Built'} Successfully!</div>
+                                <div style="font-size:13px;color:#6b7280;margin-bottom:12px;">
                                     ${uploadedImage ? '• Analyzed uploaded image<br>' : ''}
+                                    ${isIteration ? '• Applied your changes<br>' : ''}
                                     • Saved to FerenAgent Apps project<br>
-                                    • Added to Artifacts section<br>
-                                    • Preview ready on the right →
+                                    • Preview ready on the right →<br>
+                                    <br>
+                                    <em style="color:#10b981;">💡 Type "fix the button" or "add a feature" to keep improving!</em>
+                                </div>
+                                
+                                <div class="artifact-card" onclick="focusPreview()">
+                                    <div class="artifact-card-header">
+                                        <div class="artifact-card-title">
+                                            <span>📱</span>
+                                            <span>${appTitle}</span>
+                                        </div>
+                                        <div class="artifact-card-actions">
+                                            <button class="artifact-card-btn" onclick="event.stopPropagation(); copyAppCode()">📋 Copy</button>
+                                            <button class="artifact-card-btn" onclick="event.stopPropagation(); downloadApp()">📥 Download</button>
+                                        </div>
+                                    </div>
+                                    <div class="artifact-card-preview">
+                                        <iframe class="artifact-card-iframe" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>
+                                    </div>
+                                    <div style="margin-top:8px;font-size:11px;color:#6b7280;text-align:center;">
+                                        Click to view full screen →
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -1030,10 +1101,9 @@
                         document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
                         document.getElementById('dlApp').style.display = 'block';
                         
-                        // Clear uploaded image
                         removeImage();
                         
-                        console.log('✅ App built and saved to project:', agentProjectId);
+                        console.log(`✅ App ${isIteration ? 'updated' : 'built'} and saved to project:`, agentProjectId);
                     }, 300);
                 }, 500);
                 
