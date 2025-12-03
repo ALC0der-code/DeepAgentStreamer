@@ -266,6 +266,35 @@
             margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid #e5e7eb;
+            align-items: center;
+        }
+
+        .model-switch {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .model-option-btn {
+            padding: 4px 10px;
+            background: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #059669;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .model-option-btn:hover {
+            background: #ecfdf5;
+            border-color: #10b981;
+        }
+
+        .model-option-btn.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
         }
         
         .send {
@@ -634,7 +663,11 @@
                     <div class="input-box">
                         <textarea id="inp" class="input" placeholder="Ask me anything..."></textarea>
                         <div class="input-footer">
-                            <span style="font-size:11px;color:#6b7280;">Shift+Enter for new line</span>
+                            <div class="model-switch">
+                                <button class="model-option-btn active" id="sonnetBtn" onclick="switchPromptModel('sonnet')" title="Claude Sonnet 4.5 - Balanced">Sonnet</button>
+                                <button class="model-option-btn" id="opusBtn" onclick="switchPromptModel('opus')" title="Claude Opus 4 - Most Powerful">Opus</button>
+                                <button class="model-option-btn" id="haikuBtn" onclick="switchPromptModel('haiku')" title="Claude Haiku 4.5 - Fastest">Haiku</button>
+                            </div>
                             <button class="send" id="sendBtn" onclick="sendMsg()">Send</button>
                         </div>
                     </div>
@@ -1316,3 +1349,4 @@
     </script>
 </body>
 </html>
+
