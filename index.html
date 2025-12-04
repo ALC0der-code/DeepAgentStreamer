@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feren.AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -223,7 +222,7 @@
         
         .messages {
             flex: 1;
-            overflow-y: auto !important;
+            overflow-y: auto;
             padding: 30px 20px;
             scroll-behavior: smooth;
         }
@@ -259,63 +258,9 @@
         
         .text {
             font-size: 14px;
-            line-height: 1.8;
+            line-height: 1.7;
             color: #1f2937;
             word-wrap: break-word;
-        }
-
-        .text h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #065f46;
-            margin: 16px 0 8px;
-        }
-
-        .text h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #059669;
-            margin: 14px 0 6px;
-        }
-
-        .text p {
-            margin-bottom: 12px;
-        }
-
-        .text ul, .text ol {
-            margin: 8px 0 12px 24px;
-        }
-
-        .text li {
-            margin-bottom: 6px;
-        }
-
-        .text strong {
-            font-weight: 600;
-            color: #065f46;
-        }
-
-        .text code {
-            background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 13px;
-            color: #059669;
-        }
-
-        .typing-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 18px;
-            background: #10b981;
-            margin-left: 2px;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
         }
         
         .input-area {
@@ -397,7 +342,6 @@
         
         .send:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        /* BUILDER */
         .builder {
             display: flex;
             height: 100%;
@@ -535,43 +479,6 @@
             height: 100%;
             border: none;
             pointer-events: none;
-        }
-
-        .progress-bar-container {
-            margin: 12px 0;
-            background: #f3f4f6;
-            border-radius: 8px;
-            height: 24px;
-            overflow: hidden;
-            position: relative;
-            display: none;
-        }
-
-        .progress-bar-container.show {
-            display: block;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .time-estimate {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 11px;
-            color: #6b7280;
-            font-weight: 600;
         }
         
         .builder-text {
@@ -715,26 +622,25 @@
     </style>
 </head>
 <body>
-    <!-- Model Selector Modal -->
     <div id="modelModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">🤖 Select AI Model</div>
             <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
-                <div onclick="selectGlobalModel('claude-sonnet-4-20250514','Claude Sonnet 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                <div onclick="window.selectGlobalModel('claude-sonnet-4-20250514','Claude Sonnet 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
                     <div style="width:32px;height:32px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">C</div>
                     <div>
                         <div style="font-weight:600;color:#065f46;">Claude Sonnet 4.5</div>
                         <div style="font-size:11px;color:#6b7280;">Balanced speed & intelligence</div>
                     </div>
                 </div>
-                <div onclick="selectGlobalModel('claude-opus-4-20250514','Claude Opus 4')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                <div onclick="window.selectGlobalModel('claude-opus-4-20250514','Claude Opus 4')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
                     <div style="width:32px;height:32px;background:#7c3aed;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">O</div>
                     <div>
                         <div style="font-weight:600;color:#065f46;">Claude Opus 4</div>
                         <div style="font-size:11px;color:#6b7280;">Most powerful model</div>
                     </div>
                 </div>
-                <div onclick="selectGlobalModel('claude-haiku-4-20250514','Claude Haiku 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='#e5e7eb'">
+                <div onclick="window.selectGlobalModel('claude-haiku-4-20250514','Claude Haiku 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
                     <div style="width:32px;height:32px;background:#06b6d4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">H</div>
                     <div>
                         <div style="font-weight:600;color:#065f46;">Claude Haiku 4.5</div>
@@ -743,33 +649,31 @@
                 </div>
             </div>
             <div class="modal-btns">
-                <button class="btn btn-secondary" onclick="closeModal('model')">Close</button>
+                <button class="btn btn-secondary" onclick="window.closeModal('model')">Close</button>
             </div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">⚙️ Settings</div>
             <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Anthropic API Key</label>
             <input type="password" id="apiKey" class="form-input" placeholder="sk-ant-api03-...">
             <div class="modal-btns">
-                <button class="btn btn-secondary" onclick="closeModal('settings')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+                <button class="btn btn-secondary" onclick="window.closeModal('settings')">Cancel</button>
+                <button class="btn btn-primary" onclick="window.saveSettings()">Save</button>
             </div>
         </div>
     </div>
     
-    <!-- Project Modal -->
     <div id="projectModal" class="modal">
         <div class="modal-box">
             <div class="modal-title">📁 New Project</div>
             <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Project Name</label>
             <input type="text" id="projectName" class="form-input" placeholder="My Project">
             <div class="modal-btns">
-                <button class="btn btn-secondary" onclick="closeModal('project')">Cancel</button>
-                <button class="btn btn-primary" onclick="createProject()">Create</button>
+                <button class="btn btn-secondary" onclick="window.closeModal('project')">Cancel</button>
+                <button class="btn btn-primary" onclick="window.createProject()">Create</button>
             </div>
         </div>
     </div>
@@ -783,7 +687,7 @@
                     <div class="section-header">
                         <span>Projects</span>
                         <div class="section-btns">
-                            <button class="section-btn" onclick="openModal('project')">+</button>
+                            <button class="section-btn" onclick="window.openModal('project')">+</button>
                         </div>
                     </div>
                     <div id="projects"></div>
@@ -793,7 +697,7 @@
                     <div class="section-header">
                         <span>Chats</span>
                         <div class="section-btns">
-                            <button class="section-btn" onclick="newChat()">+</button>
+                            <button class="section-btn" onclick="window.newChat()">+</button>
                         </div>
                     </div>
                     <div id="chats"></div>
@@ -805,7 +709,7 @@
                 </div>
             </div>
             
-            <button class="agent-btn" id="agentBtn" onclick="openAgent()">
+            <button class="agent-btn" id="agentBtn" onclick="window.openAgent()">
                 🤖 FerenAgent
             </button>
             
@@ -816,22 +720,21 @@
             </div>
             
             <div class="footer">
-                <button class="settings" onclick="openModal('settings')">⚙️ Settings</button>
+                <button class="settings" onclick="window.openModal('settings')">⚙️ Settings</button>
             </div>
         </div>
         
         <div class="main">
-            <!-- CHAT VIEW -->
             <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
                 <div class="header">
-                    <div class="model" onclick="openModal('model')">
+                    <div class="model" onclick="window.openModal('model')">
                         <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;">C</span>
                         <span id="modelName">Claude Sonnet 4.5</span>
                         <span style="font-size:10px;color:#6b7280;">▼</span>
                     </div>
                     <div class="actions">
-                        <button class="action" onclick="shareChat()">🔗 Share</button>
-                        <button class="action" onclick="dlChat()">📥 Download</button>
+                        <button class="action" onclick="window.shareChat()">🔗 Share</button>
+                        <button class="action" onclick="window.dlChat()">📥 Download</button>
                     </div>
                 </div>
                 <div class="messages" id="msgs"></div>
@@ -840,40 +743,39 @@
                         <textarea id="inp" class="input" placeholder="Ask me anything..."></textarea>
                         <div class="input-footer">
                             <div class="model-switch">
-                                <button class="model-btn active" id="sonnetBtn" onclick="switchPromptModel('sonnet')" title="Claude Sonnet 4.5">Sonnet</button>
-                                <button class="model-btn" id="opusBtn" onclick="switchPromptModel('opus')" title="Claude Opus 4">Opus</button>
-                                <button class="model-btn" id="haikuBtn" onclick="switchPromptModel('haiku')" title="Claude Haiku 4.5">Haiku</button>
+                                <button class="model-btn active" id="sonnetBtn" onclick="window.switchPromptModel('sonnet')" title="Claude Sonnet 4.5">Sonnet</button>
+                                <button class="model-btn" id="opusBtn" onclick="window.switchPromptModel('opus')" title="Claude Opus 4">Opus</button>
+                                <button class="model-btn" id="haikuBtn" onclick="window.switchPromptModel('haiku')" title="Claude Haiku 4.5">Haiku</button>
                             </div>
-                            <button class="send" id="sendBtn" onclick="sendMsg()">Send</button>
+                            <button class="send" id="sendBtn" onclick="window.sendMsg()">Send</button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- BUILDER VIEW -->
             <div id="builderView" class="builder" style="display:none;">
                 <div class="builder-chat">
                     <div class="builder-msgs" id="builderMsgs"></div>
                     <div class="builder-input">
                         <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
-                            <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                            <input type="file" id="imageInput" accept="image/*" style="display:none;">
                             <div class="upload-label">
                                 <span>📷 Upload image (screenshot, mockup, error)</span>
                             </div>
                             <img id="imagePreview" class="image-preview">
-                            <button id="removeImg" class="remove-image" onclick="event.stopPropagation(); removeImage()" style="display:none;">✕ Remove</button>
+                            <button id="removeImg" class="remove-image" style="display:none;">✕ Remove</button>
                         </div>
                         <textarea id="builderInp" class="builder-text" placeholder="Describe app or upload screenshot to improve..."></textarea>
-                        <button class="build-btn" onclick="buildApp()">Build App</button>
+                        <button class="build-btn" onclick="window.buildApp()">Build App</button>
                     </div>
                 </div>
                 <div class="preview">
                     <div class="preview-header">
                         <div class="tabs">
-                            <button class="tab active" id="previewTab" onclick="showPreview()">👁️ Preview</button>
-                            <button class="tab" id="codeTab" onclick="showCode()">💻 Code</button>
+                            <button class="tab active" id="previewTab" onclick="window.showPreview()">👁️ Preview</button>
+                            <button class="tab" id="codeTab" onclick="window.showCode()">💻 Code</button>
                         </div>
-                        <button class="action" id="dlApp" onclick="dlApp()" style="display:none;">📥 Download</button>
+                        <button class="action" id="dlApp" onclick="window.dlApp()" style="display:none;">📥 Download</button>
                     </div>
                     <div class="preview-body" id="preview">
                         <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;flex-direction:column;">
@@ -887,7 +789,6 @@
     </div>
 
     <script>
-        // GLOBAL STATE
         let api = localStorage.getItem('api') || '';
         let chatsData = JSON.parse(localStorage.getItem('chats') || '{}');
         let projectsData = JSON.parse(localStorage.getItem('projects') || '{}');
@@ -897,21 +798,28 @@
         let appCode = '';
         let uploadedImage = null;
         let uploadedImageData = null;
-        let builderContext = [];
-        let currentAppDescription = '';
         let globalModel = localStorage.getItem('globalModel') || 'claude-sonnet-4-20250514';
         let globalModelName = localStorage.getItem('globalModelName') || 'Claude Sonnet 4.5';
-        let promptModel = 'sonnet'; // Current prompt model selection
+        let promptModel = 'sonnet';
         
-        init();
-        
-        function init() {
-            mermaid.initialize({ startOnLoad: false });
+        window.init = function() {
             document.getElementById('modelName').textContent = globalModelName;
             updateAll();
             if (!api) openModal('settings');
             else newChat();
-        }
+            
+            document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+            document.getElementById('removeImg').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeImage();
+            });
+            document.getElementById('inp').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    window.sendMsg();
+                }
+            });
+        };
         
         function updateAll() {
             updateProjects();
@@ -922,42 +830,39 @@
             document.getElementById('cost').textContent = '$' + usage.cost.toFixed(4);
         }
         
-        function openModal(type) {
+        window.openModal = function(type) {
             document.getElementById(type + 'Modal').classList.add('show');
-        }
+        };
         
-        function closeModal(type) {
+        window.closeModal = function(type) {
             document.getElementById(type + 'Modal').classList.remove('show');
-        }
+        };
         
-        function saveSettings() {
+        window.saveSettings = function() {
             api = document.getElementById('apiKey').value.trim();
             if (api) {
                 localStorage.setItem('api', api);
                 closeModal('settings');
                 if (Object.keys(chatsData).length === 0) newChat();
             }
-        }
+        };
         
-        // Model selection functions
-        function selectGlobalModel(modelId, modelName) {
+        window.selectGlobalModel = function(modelId, modelName) {
             globalModel = modelId;
             globalModelName = modelName;
             document.getElementById('modelName').textContent = modelName;
             localStorage.setItem('globalModel', modelId);
             localStorage.setItem('globalModelName', modelName);
             closeModal('model');
-            console.log('Global model set to:', modelName);
-        }
+        };
         
-        function switchPromptModel(type) {
+        window.switchPromptModel = function(type) {
             promptModel = type;
             document.getElementById('sonnetBtn').classList.remove('active');
             document.getElementById('opusBtn').classList.remove('active');
             document.getElementById('haikuBtn').classList.remove('active');
             document.getElementById(type + 'Btn').classList.add('active');
-            console.log('Prompt model:', type);
-        }
+        };
         
         function getModelForRequest() {
             const modelMap = {
@@ -968,78 +873,61 @@
             return modelMap[promptModel] || globalModel;
         }
         
-        // Projects
-        function createProject() {
+        window.createProject = function() {
             const name = document.getElementById('projectName').value.trim();
             if (name) {
                 const id = 'p' + Date.now();
-                projectsData[id] = { id, name, created: Date.now(), apps: [] };
+                projectsData[id] = { id: id, name: name, created: Date.now(), apps: [] };
                 localStorage.setItem('projects', JSON.stringify(projectsData));
                 document.getElementById('projectName').value = '';
                 updateAll();
                 closeModal('project');
             }
-        }
+        };
         
         function updateProjects() {
-            const html = Object.values(projectsData).slice(0,5).map(p => `
-                <div class="item">
-                    <span>📁</span>
-                    <span class="item-text">${p.name}</span>
-                    <button class="dots" onclick="event.stopPropagation();showDrop('p${p.id}')">⋮</button>
-                    <div class="dropdown" id="dp${p.id}">
-                        <button class="drop-btn" onclick="editProject('${p.id}')">✏️ Edit</button>
-                        <button class="drop-btn" onclick="delProject('${p.id}')">🗑️ Delete</button>
-                    </div>
-                </div>
-            `).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No projects</div>';
+            const html = Object.values(projectsData).slice(0,5).map(function(p) {
+                return '<div class="item"><span>📁</span><span class="item-text">' + p.name + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'p' + p.id + '\')">⋮</button><div class="dropdown" id="dp' + p.id + '"><button class="drop-btn" onclick="window.editProject(\'' + p.id + '\')">✏️ Edit</button><button class="drop-btn" onclick="window.delProject(\'' + p.id + '\')">🗑️ Delete</button></div></div>';
+            }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No projects</div>';
             document.getElementById('projects').innerHTML = html;
         }
         
-        function editProject(id) {
+        window.editProject = function(id) {
             const name = prompt('New name:', projectsData[id].name);
             if (name) {
                 projectsData[id].name = name;
                 localStorage.setItem('projects', JSON.stringify(projectsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function delProject(id) {
+        window.delProject = function(id) {
             if (confirm('Delete project?')) {
                 delete projectsData[id];
                 localStorage.setItem('projects', JSON.stringify(projectsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        // Chats
         function updateChats() {
-            const html = Object.values(chatsData).slice(0,10).map(c => `
-                <div class="item ${currentChatId===c.id?'active':''}" onclick="loadChat('${c.id}')">
-                    <span>💬</span>
-                    <span class="item-text">${c.title}</span>
-                    <button class="dots" onclick="event.stopPropagation();showDrop('c${c.id}')">⋮</button>
-                    <div class="dropdown" id="dc${c.id}">
-                        <button class="drop-btn" onclick="editChat('${c.id}')">✏️ Edit</button>
-                        <button class="drop-btn" onclick="delChat('${c.id}')">🗑️ Delete</button>
-                    </div>
-                </div>
-            `).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No chats</div>';
+            const html = Object.values(chatsData).slice(0,10).map(function(c) {
+                const active = currentChatId === c.id ? 'active' : '';
+                return '<div class="item ' + active + '" onclick="window.loadChat(\'' + c.id + '\')"><span>💬</span><span class="item-text">' + c.title + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'c' + c.id + '\')">⋮</button><div class="dropdown" id="dc' + c.id + '"><button class="drop-btn" onclick="window.editChat(\'' + c.id + '\')">✏️ Edit</button><button class="drop-btn" onclick="window.delChat(\'' + c.id + '\')">🗑️ Delete</button></div></div>';
+            }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No chats</div>';
             document.getElementById('chats').innerHTML = html;
         }
         
-        function newChat() {
+        window.newChat = function() {
             const id = 'c' + Date.now();
-            chatsData[id] = { id, title: 'New Chat', msgs: [], created: Date.now() };
+            chatsData[id] = { id: id, title: 'New Chat', msgs: [], created: Date.now() };
             currentChatId = id;
             localStorage.setItem('chats', JSON.stringify(chatsData));
             loadChat(id);
-        }
+        };
         
-        function loadChat(id) {
+        window.loadChat = function(id) {
             currentChatId = id;
             document.getElementById('chatView').style.display = 'flex';
             document.getElementById('builderView').style.display = 'none';
@@ -1047,24 +935,22 @@
             
             const msgs = document.getElementById('msgs');
             msgs.innerHTML = '';
-            if (chatsData[id]?.msgs) {
-                chatsData[id].msgs.forEach(m => addMsg(m.role, m.content, false));
+            if (chatsData[id] && chatsData[id].msgs) {
+                chatsData[id].msgs.forEach(function(m) {
+                    addMsg(m.role, m.content, false);
+                });
             }
             
-            // Reset prompt model to default
             switchPromptModel('sonnet');
-            
             updateAll();
-        }
+        };
         
-        function addMsg(role, content, save = true) {
+        function addMsg(role, content, save) {
+            if (save === undefined) save = true;
             const msgs = document.getElementById('msgs');
             const div = document.createElement('div');
             div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-            div.innerHTML = `
-                <div class="label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div>
-                <div class="text">${content}</div>
-            `;
+            div.innerHTML = '<div class="label">' + (role === 'user' ? 'YOU' : 'FEREN AI') + '</div><div class="text">' + content + '</div>';
             msgs.appendChild(div);
             msgs.scrollTop = msgs.scrollHeight;
             
@@ -1072,7 +958,7 @@
                 if (!chatsData[currentChatId].msgs) {
                     chatsData[currentChatId].msgs = [];
                 }
-                chatsData[currentChatId].msgs.push({ role, content });
+                chatsData[currentChatId].msgs.push({ role: role, content: content });
                 if (role === 'user' && chatsData[currentChatId].msgs.length === 1) {
                     chatsData[currentChatId].title = content.substring(0, 40);
                 }
@@ -1081,169 +967,7 @@
             }
         }
         
-        async function sendMsg() {
-            const inp = document.getElementById('inp');
-            const text = inp.value.trim();
-            if (!text || !api) return;
-            
-            addMsg('user', text);
-            inp.value = '';
-            
-            const btn = document.getElementById('sendBtn');
-            btn.disabled = true;
-            btn.textContent = '...';
-            
-            const modelToUse = getModelForRequest();
-            
-            // Create streaming message
-            const msgs = document.getElementById('msgs');
-            const streamDiv = document.createElement('div');
-            streamDiv.className = 'msg ai';
-            streamDiv.id = 'streaming';
-            streamDiv.innerHTML = `
-                <div class="label">FEREN AI</div>
-                <div class="text" id="streamText"><span class="typing-cursor"></span></div>
-            `;
-            msgs.appendChild(streamDiv);
-            msgs.scrollTop = msgs.scrollHeight;
-            
-            const streamText = document.getElementById('streamText');
-            let fullResponse = '';
-            
-            try {
-                // Try streaming first
-                const streamRes = await fetch('/api/stream', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        apiKey: api,
-                        model: modelToUse,
-                        messages: [{ role: 'user', content: text }]
-                    })
-                }).catch(() => null);
-                
-                if (streamRes && streamRes.ok) {
-                    // Streaming available
-                    const reader = streamRes.body.getReader();
-                    const decoder = new TextDecoder();
-                    
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        
-                        const chunk = decoder.decode(value);
-                        const lines = chunk.split('\n');
-                        
-                        for (const line of lines) {
-                            if (line.startsWith('data: ')) {
-                                const data = line.slice(6);
-                                if (data === '[DONE]') continue;
-                                
-                                try {
-                                    const parsed = JSON.parse(data);
-                                    if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                                        fullResponse += parsed.delta.text;
-                                        streamText.innerHTML = formatText(fullResponse) + '<span class="typing-cursor"></span>';
-                                        msgs.scrollTop = msgs.scrollHeight;
-                                    }
-                                    if (parsed.type === 'message_delta' && parsed.usage) {
-                                        usage.tokens += (parsed.usage.input_tokens || 0) + (parsed.usage.output_tokens || 0);
-                                        usage.calls++;
-                                        usage.cost += ((parsed.usage.input_tokens || 0) * 3 + (parsed.usage.output_tokens || 0) * 15) / 1000000;
-                                        localStorage.setItem('usage', JSON.stringify(usage));
-                                        updateAll();
-                                    }
-                                } catch (e) {}
-                            }
-                        }
-                    }
-                } else {
-                    // Fallback to regular API
-                    streamText.innerHTML = 'Thinking...<span class="typing-cursor"></span>';
-                    
-                    const res = await fetch('/api/anthropic', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            apiKey: api,
-                            model: modelToUse,
-                            messages: [{ role: 'user', content: text }],
-                            max_tokens: 2048
-                        })
-                    });
-                    
-                    const data = await res.json();
-                    fullResponse = data.content[0].text;
-                    
-                    if (data.usage) {
-                        usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
-                        usage.calls++;
-                        usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
-                        localStorage.setItem('usage', JSON.stringify(usage));
-                        updateAll();
-                    }
-                }
-                
-                // Remove streaming div and add formatted message
-                streamDiv.remove();
-                addFormattedMsg('assistant', fullResponse);
-                
-                // Reset to default model
-                switchPromptModel('sonnet');
-                
-            } catch (e) {
-                streamDiv.remove();
-                addMsg('assistant', 'Error: ' + e.message);
-            }
-            
-            btn.disabled = false;
-            btn.textContent = 'Send';
-        }
-
-        function addFormattedMsg(role, content) {
-            const msgs = document.getElementById('msgs');
-            const div = document.createElement('div');
-            div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-            
-            const formattedContent = formatText(content);
-            
-            div.innerHTML = `
-                <div class="label">${role === 'user' ? 'YOU' : 'FEREN AI'}</div>
-                <div class="text">${formattedContent}</div>
-            `;
-            msgs.appendChild(div);
-            msgs.scrollTop = msgs.scrollHeight;
-            
-            if (currentChatId) {
-                if (!chatsData[currentChatId].msgs) {
-                    chatsData[currentChatId].msgs = [];
-                }
-                chatsData[currentChatId].msgs.push({ role, content });
-                localStorage.setItem('chats', JSON.stringify(chatsData));
-                updateAll();
-            }
-        }
-
-        function formatText(text) {
-            // Convert markdown to HTML
-            let formatted = text
-                // Headers
-                .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
-                .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
-                // Bold
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                // Italic  
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                // Inline code
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                // Line breaks to paragraphs
-                .replace(/\n\n/g, '</p><p>')
-                // Bullet points
-                .replace(/^- (.*?)$/gm, '<li>$1</li>')
-                .replace(/^• (.*?)$/gm, '<li>$1</li>');
-            
-            // Wrap lists
-            formatted = formatted.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>        async function sendMsg() {
+        window.sendMsg = async function() {
             const inp = document.getElementById('inp');
             const text = inp.value.trim();
             if (!text || !api) return;
@@ -1258,11 +982,14 @@
             const modelToUse = getModelForRequest();
             
             try {
-                const res = await fetch('/api/anthropic', {
+                const res = await fetch('https://api.anthropic.com/v1/messages', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': api,
+                        'anthropic-version': '2023-06-01'
+                    },
                     body: JSON.stringify({
-                        apiKey: api,
                         model: modelToUse,
                         messages: [{ role: 'user', content: text }],
                         max_tokens: 2048
@@ -1281,8 +1008,6 @@
                 }
                 
                 addMsg('assistant', reply);
-                
-                // Reset to default after sending
                 switchPromptModel('sonnet');
                 
             } catch (e) {
@@ -1291,108 +1016,86 @@
             
             btn.disabled = false;
             btn.textContent = 'Send';
-        }</ul>');
-            
-            // Wrap in paragraph if no block elements
-            if (!formatted.includes('<h') && !formatted.includes('<ul')) {
-                formatted = '<p>' + formatted + '</p>';
-            }
-            
-            return formatted;
-        }
+        };
         
-        function editChat(id) {
+        window.editChat = function(id) {
             const name = prompt('New title:', chatsData[id].title);
             if (name) {
                 chatsData[id].title = name;
                 localStorage.setItem('chats', JSON.stringify(chatsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function delChat(id) {
+        window.delChat = function(id) {
             if (confirm('Delete chat?')) {
                 delete chatsData[id];
                 if (currentChatId === id) newChat();
                 localStorage.setItem('chats', JSON.stringify(chatsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function shareChat() {
+        window.shareChat = function() {
             navigator.clipboard.writeText(window.location.href);
             alert('✅ Share link copied!');
-        }
+        };
         
-        function dlChat() {
+        window.dlChat = function() {
             if (!currentChatId || !chatsData[currentChatId]) return;
             const chat = chatsData[currentChatId];
-            let md = `# ${chat.title}\n\n`;
-            chat.msgs.forEach(m => {
-                md += `## ${m.role === 'user' ? 'You' : 'Feren AI'}\n${m.content}\n\n`;
+            let md = '# ' + chat.title + '\n\n';
+            chat.msgs.forEach(function(m) {
+                md += '## ' + (m.role === 'user' ? 'You' : 'Feren AI') + '\n' + m.content + '\n\n';
             });
             const blob = new Blob([md], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `chat-${Date.now()}.md`;
+            a.download = 'chat-' + Date.now() + '.md';
             a.click();
             URL.revokeObjectURL(url);
-        }
+        };
         
-        // Artifacts
         function updateArtifacts() {
-            const html = Object.values(artifactsData).slice(0,10).map(a => {
-                const icon = a.type==='html'?'📱':a.type==='mermaid'?'📊':'💻';
-                return `
-                    <div class="item" onclick="openArtInBuilder('${a.id}')">
-                        <span>${icon}</span>
-                        <span class="item-text">${a.title}</span>
-                        <button class="dots" onclick="event.stopPropagation();showDrop('a${a.id}')">⋮</button>
-                        <div class="dropdown" id="da${a.id}">
-                            <button class="drop-btn" onclick="openArtInBuilder('${a.id}')">👁️ Open</button>
-                            <button class="drop-btn" onclick="editArt('${a.id}')">✏️ Edit Name</button>
-                            <button class="drop-btn" onclick="dlArt('${a.id}')">📥 Download</button>
-                            <button class="drop-btn" onclick="delArt('${a.id}')">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `;
+            const html = Object.values(artifactsData).slice(0,10).map(function(a) {
+                const icon = a.type === 'html' ? '📱' : a.type === 'mermaid' ? '📊' : '💻';
+                return '<div class="item" onclick="window.openArtInBuilder(\'' + a.id + '\')"><span>' + icon + '</span><span class="item-text">' + a.title + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'a' + a.id + '\')">⋮</button><div class="dropdown" id="da' + a.id + '"><button class="drop-btn" onclick="window.openArtInBuilder(\'' + a.id + '\')">👁️ Open</button><button class="drop-btn" onclick="window.editArt(\'' + a.id + '\')">✏️ Edit Name</button><button class="drop-btn" onclick="window.dlArt(\'' + a.id + '\')">📥 Download</button><button class="drop-btn" onclick="window.delArt(\'' + a.id + '\')">🗑️ Delete</button></div></div>';
             }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No artifacts</div>';
             document.getElementById('artifacts').innerHTML = html;
         }
         
-        function openArtInBuilder(id) {
+        window.openArtInBuilder = function(id) {
             const art = artifactsData[id];
             if (!art) return;
             
             openAgent();
             appCode = art.content;
-            currentAppDescription = art.title;
             
-            setTimeout(() => {
-                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${art.content.replace(/"/g, '&quot;')}"></iframe>`;
+            setTimeout(function() {
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + art.content.replace(/"/g, '&quot;') + '"></iframe>';
                 document.getElementById('dlApp').style.display = 'block';
                 
                 const msgs = document.getElementById('builderMsgs');
-                msgs.innerHTML = `<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>${art.title}</strong><br><em style="font-size:12px;color:#6b7280;">You can now improve it!</em></div></div>`;
+                msgs.innerHTML = '<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>' + art.title + '</strong><br><em style="font-size:12px;color:#6b7280;">You can now improve it!</em></div></div>';
             }, 100);
             
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function editArt(id) {
+        window.editArt = function(id) {
             const name = prompt('New name:', artifactsData[id].title);
             if (name) {
                 artifactsData[id].title = name;
                 localStorage.setItem('artifacts', JSON.stringify(artifactsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function dlArt(id) {
+        window.dlArt = function(id) {
             const a = artifactsData[id];
             if (a) {
                 const blob = new Blob([a.content], { type: 'text/html' });
@@ -1403,35 +1106,35 @@
                 link.click();
                 URL.revokeObjectURL(url);
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function delArt(id) {
+        window.delArt = function(id) {
             if (confirm('Delete artifact?')) {
                 delete artifactsData[id];
                 localStorage.setItem('artifacts', JSON.stringify(artifactsData));
                 updateAll();
             }
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
         
-        function showDrop(id) {
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-            document.getElementById('d' + id)?.classList.add('show');
-        }
+        window.showDrop = function(id) {
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            const elem = document.getElementById('d' + id);
+            if (elem) elem.classList.add('show');
+        };
         
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             if (!e.target.closest('.item')) {
-                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
             }
         });
         
-        // FerenAgent
-        function openAgent() {
+        window.openAgent = function() {
             document.getElementById('chatView').style.display = 'none';
             document.getElementById('builderView').style.display = 'flex';
             document.getElementById('agentBtn').classList.add('active');
-        }
+        };
         
         function handleImageUpload(event) {
             const file = event.target.files[0];
@@ -1458,30 +1161,20 @@
             document.getElementById('imageInput').value = '';
         }
         
-        async function buildApp() {
+        window.buildApp = async function() {
             const inp = document.getElementById('builderInp');
             const text = inp.value.trim();
             
             if (!api) { openModal('settings'); return; }
             if (!text && !uploadedImage) { alert('Describe app or upload image'); return; }
             
-            const isIteration = appCode && (
-                text.toLowerCase().includes('fix') ||
-                text.toLowerCase().includes('improve') ||
-                text.toLowerCase().includes('change') ||
-                text.toLowerCase().includes('add') ||
-                text.toLowerCase().includes('doesnt') ||
-                text.toLowerCase().includes("doesn't") ||
-                text.toLowerCase().includes('not working')
-            );
-            
             const msgs = document.getElementById('builderMsgs');
             
             const userDiv = document.createElement('div');
             userDiv.className = 'msg user';
-            let userContent = `<div class="label">YOU</div><div class="text">${text || 'Analyze image'}</div>`;
+            let userContent = '<div class="label">YOU</div><div class="text">' + (text || 'Analyze image') + '</div>';
             if (uploadedImageData) {
-                userContent += `<img src="${uploadedImageData}" style="max-width:100%;border-radius:8px;margin-top:8px;">`;
+                userContent += '<img src="' + uploadedImageData + '" style="max-width:100%;border-radius:8px;margin-top:8px;">';
             }
             userDiv.innerHTML = userContent;
             msgs.appendChild(userDiv);
@@ -1492,27 +1185,12 @@
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg ai';
             aiDiv.id = 'building';
-            aiDiv.innerHTML = `
-                <div class="label">FEREN AI</div>
-                <div class="text" id="buildStatus">
-                    <div>${isIteration ? '🔧 Improving app...' : '🔍 Analyzing request...'}</div>
-                    <div>📋 Planning structure...</div>
-                    <div>🎨 Designing UI...</div>
-                    <div>🤖 Generating code...</div>
-                </div>
-            `;
+            aiDiv.innerHTML = '<div class="label">FEREN AI</div><div class="text">🔍 Building your app...</div>';
             msgs.appendChild(aiDiv);
             msgs.scrollTop = msgs.scrollHeight;
             
             try {
-                let messageContent;
-                
-                if (isIteration) {
-                    messageContent = `Current app:\n\`\`\`html\n${appCode}\n\`\`\`\n\nUser: ${text}\n\nModify the app to fix/improve based on feedback. Return ONLY updated HTML.`;
-                } else {
-                    currentAppDescription = text;
-                    messageContent = `Create HTML app: ${text}\n\nGREEN theme (#10b981), fully functional, single file. Return ONLY HTML.`;
-                }
+                let messageContent = 'Create HTML app: ' + text + '\n\nGREEN theme (#10b981), fully functional, single file. Return ONLY HTML.';
                 
                 let messages = [];
                 if (uploadedImageData) {
@@ -1529,11 +1207,14 @@
                     messages = [{ role: 'user', content: messageContent }];
                 }
                 
-                const res = await fetch('/api/anthropic', {
+                const res = await fetch('https://api.anthropic.com/v1/messages', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': api,
+                        'anthropic-version': '2023-06-01'
+                    },
                     body: JSON.stringify({
-                        apiKey: api,
                         model: globalModel,
                         messages: messages,
                         max_tokens: 4096
@@ -1545,114 +1226,58 @@
                 
                 appCode = code;
                 
-                // Save
-                const projId = getOrCreateAgentProj();
                 const artId = 'app' + Date.now();
                 artifactsData[artId] = {
                     id: artId,
                     type: 'html',
-                    title: currentAppDescription || text.substring(0, 40),
+                    title: text.substring(0, 40),
                     content: code,
-                    projectId: projId,
                     created: Date.now()
                 };
                 localStorage.setItem('artifacts', JSON.stringify(artifactsData));
                 updateAll();
                 
-                // Show success with artifact card
-                const appTitle = currentAppDescription || text.substring(0, 40);
-                document.getElementById('building').innerHTML = `
-                    <div class="label">FEREN AI</div>
-                    <div class="text">
-                        <div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ ${isIteration ? 'Updated' : 'Built'} Successfully!</div>
-                        <em style="font-size:12px;color:#10b981;">💡 Type "fix..." or "add..." to improve!</em>
-                        
-                        <div class="artifact-card" onclick="focusPreview()">
-                            <div class="artifact-card-header">
-                                <div class="artifact-card-title">
-                                    <span>📱</span>
-                                    <span>${appTitle}</span>
-                                </div>
-                                <div class="artifact-card-actions">
-                                    <button class="artifact-card-btn" onclick="event.stopPropagation();copyCode()">📋 Copy</button>
-                                    <button class="artifact-card-btn" onclick="event.stopPropagation();dlApp()">📥 Download</button>
-                                </div>
-                            </div>
-                            <div class="artifact-card-preview">
-                                <iframe class="artifact-card-iframe" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>
-                            </div>
-                            <div style="margin-top:8px;font-size:11px;color:#6b7280;text-align:center;">Click to view full screen →</div>
-                        </div>
-                    </div>
-                `;
+                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text"><div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ Built Successfully!</div></div>';
                 
-                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${code.replace(/"/g, '&quot;')}"></iframe>`;
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + code.replace(/"/g, '&quot;') + '"></iframe>';
                 document.getElementById('dlApp').style.display = 'block';
                 
                 removeImage();
                 
             } catch (e) {
-                document.getElementById('building').innerHTML = `<div class="label">FEREN AI</div><div class="text">❌ Error: ${e.message}</div>`;
+                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text">❌ Error: ' + e.message + '</div>';
             }
-        }
+        };
         
-        function getOrCreateAgentProj() {
-            let p = Object.values(projectsData).find(x => x.name === 'FerenAgent Apps');
-            if (!p) {
-                const id = 'pferen';
-                projectsData[id] = { id, name: 'FerenAgent Apps', created: Date.now(), apps: [] };
-                localStorage.setItem('projects', JSON.stringify(projectsData));
-                updateAll();
-                return id;
-            }
-            return p.id;
-        }
-        
-        function showPreview() {
+        window.showPreview = function() {
             document.getElementById('previewTab').classList.add('active');
             document.getElementById('codeTab').classList.remove('active');
             if (appCode) {
-                document.getElementById('preview').innerHTML = `<iframe class="frame" srcdoc="${appCode.replace(/"/g, '&quot;')}"></iframe>`;
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + appCode.replace(/"/g, '&quot;') + '"></iframe>';
             }
-        }
+        };
         
-        function showCode() {
+        window.showCode = function() {
             document.getElementById('codeTab').classList.add('active');
             document.getElementById('previewTab').classList.remove('active');
             if (appCode) {
                 const escaped = appCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                document.getElementById('preview').innerHTML = `<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow-y:scroll;height:100%;white-space:pre-wrap;">${escaped}</div>`;
+                document.getElementById('preview').innerHTML = '<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow-y:scroll;height:100%;white-space:pre-wrap;">' + escaped + '</div>';
             }
-        }
+        };
         
-        function copyCode() {
-            if (appCode) {
-                navigator.clipboard.writeText(appCode);
-                alert('✅ Code copied!');
-            }
-        }
-        
-        function dlApp() {
+        window.dlApp = function() {
             if (!appCode) return;
             const blob = new Blob([appCode], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `feren-app-${Date.now()}.html`;
+            a.download = 'feren-app-' + Date.now() + '.html';
             a.click();
             URL.revokeObjectURL(url);
-        }
+        };
         
-        function focusPreview() {
-            document.getElementById('preview').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        document.getElementById('inp').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMsg();
-            }
-        });
+        window.init();
     </script>
 </body>
 </html>
