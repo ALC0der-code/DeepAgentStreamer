@@ -1,3 +1,22 @@
+# Final Files for Feren.AI Deployment
+
+## 📁 Project Structure
+
+```
+feren-ai/
+├── api/
+│   └── anthropic.js
+├── public/
+│   └── index.html
+└── package.json (optional)
+```
+
+That's it! Only **3 files** needed.
+
+---
+
+## 📄 File 1: `/api/anthropic.js`
+
 ```javascript
 export default async function handler(req, res) {
     // Enable CORS
@@ -55,3 +74,4 @@ export default async function handler(req, res) {
         });
     }
 }
+```
