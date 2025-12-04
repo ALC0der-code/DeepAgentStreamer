@@ -1,23 +1,3 @@
-# Final Files for Feren.AI Deployment
-
-## 📁 Project Structure
-
-```
-feren-ai/
-├── api/
-│   └── anthropic.js
-├── public/
-│   └── index.html
-└── package.json (optional)
-```
-
-That's it! Only **3 files** needed.
-
----
-
-## 📄 File 1: `/api/anthropic.js`
-
-```javascript
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,10 +16,21 @@ export default async function handler(req, res) {
     try {
         const { apiKey, model, messages, max_tokens } = req.body;
 
+        // Validate request body
+        if (!apiKey) {
+            return res.status(400).json({ error: 'API key is required' });
+        }
+
+        if (!messages || !Array.isArray(messages)) {
+            return res.status(400).json({ error: 'Messages array is required' });
+        }
+
         // Security: Validate API key format
-        if (!apiKey || !apiKey.startsWith('sk-ant-')) {
+        if (!apiKey.startsWith('sk-ant-')) {
             return res.status(400).json({ error: 'Invalid API key format' });
         }
+
+        console.log('Calling Anthropic API with model:', model);
 
         // Call Anthropic API
         const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -58,8 +49,12 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
+        // Log for debugging
+        console.log('Anthropic API response status:', response.status);
+
         // Handle Anthropic API errors
         if (!response.ok) {
+            console.error('Anthropic API error:', data);
             return res.status(response.status).json(data);
         }
 
@@ -70,8 +65,8 @@ export default async function handler(req, res) {
         console.error('Proxy error:', error);
         return res.status(500).json({ 
             error: 'Internal server error',
-            message: error.message 
+            message: error.message,
+            details: error.toString()
         });
     }
 }
-```
