@@ -986,8 +986,8 @@
                                 <img id="imagePreview" class="image-preview">
                                 <button id="removeImg" class="remove-image" style="display:none;">✕ Remove</button>
                             </div>
-                            <textarea id="builderInp" class="builder-text" placeholder="Describe what you want to build or improve..."></textarea>
-                            <button class="build-btn" onclick="window.buildApp()">Build / Improve</button>
+                            <textarea id="builderInp" class="builder-text" placeholder="Ask questions or say 'build a calculator', 'add dark mode', etc..."></textarea>
+                            <button class="build-btn" onclick="window.buildApp()">Send</button>
                         </div>
                     </div>
                     <div class="preview">
@@ -1580,17 +1580,12 @@
             if (!api) { openModal('settings'); return; }
             if (!text && !uploadedImage) { alert('Describe what you want to build or improve'); return; }
             
-            const isIteration = appCode && (
-                text.toLowerCase().includes('fix') ||
-                text.toLowerCase().includes('improve') ||
-                text.toLowerCase().includes('change') ||
-                text.toLowerCase().includes('add') ||
-                text.toLowerCase().includes('modify') ||
-                text.toLowerCase().includes('update') ||
-                text.toLowerCase().includes('make') ||
-                text.toLowerCase().includes('better') ||
-                text.toLowerCase().includes('different')
-            );
+            // Detect if user wants to BUILD or just CHAT
+            const buildKeywords = ['build', 'create', 'make', 'develop', 'generate', 'design'];
+            const modifyKeywords = ['fix', 'improve', 'change', 'add', 'modify', 'update', 'better', 'different'];
+            const isBuildRequest = buildKeywords.some(kw => text.toLowerCase().includes(kw)) || 
+                                   (appCode && modifyKeywords.some(kw => text.toLowerCase().includes(kw))) ||
+                                   uploadedImage;
             
             const msgs = document.getElementById('builderMsgs');
             
@@ -1605,6 +1600,56 @@
             msgs.scrollTop = msgs.scrollHeight;
             
             inp.value = '';
+            
+            // If it's just a chat question, respond without building
+            if (!isBuildRequest) {
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'msg ai';
+                aiDiv.id = 'chatResponse';
+                aiDiv.innerHTML = '<div class="label">FEREN AI</div><div class="text">💬 Responding...</div>';
+                msgs.appendChild(aiDiv);
+                msgs.scrollTop = msgs.scrollHeight;
+                
+                try {
+                    const data = await callAnthropicAPI([{ role: 'user', content: text }], 2048);
+                    
+                    if (data.error) {
+                        document.getElementById('chatResponse').querySelector('.text').innerHTML = 'Error: ' + (data.error.message || JSON.stringify(data.error));
+                    } else {
+                        const reply = data.content[0].text;
+                        
+                        if (data.usage) {
+                            usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
+                            usage.calls++;
+                            usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
+                            localStorage.setItem('usage', JSON.stringify(usage));
+                            updateAll();
+                        }
+                        
+                        // Stream the response
+                        const textDiv = document.getElementById('chatResponse').querySelector('.text');
+                        let currentText = '';
+                        const words = reply.split(' ');
+                        
+                        for (let i = 0; i < words.length; i++) {
+                            currentText += (i > 0 ? ' ' : '') + words[i];
+                            textDiv.innerHTML = marked.parse(currentText) + '<span class="typing-cursor"></span>';
+                            msgs.scrollTop = msgs.scrollHeight;
+                            await new Promise(resolve => setTimeout(resolve, 30));
+                        }
+                        
+                        textDiv.innerHTML = marked.parse(currentText);
+                        msgs.scrollTop = msgs.scrollHeight;
+                    }
+                } catch (e) {
+                    document.getElementById('chatResponse').querySelector('.text').innerHTML = 'Error: ' + e.message;
+                }
+                
+                return;
+            }
+            
+            // BUILD MODE: Show progress and build the app
+            const isIteration = appCode && modifyKeywords.some(kw => text.toLowerCase().includes(kw));
             
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg ai';
