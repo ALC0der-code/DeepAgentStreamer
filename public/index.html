@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feren.AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -175,6 +176,78 @@
             flex-direction: column;
             background: #f5f5dc;
         }
+
+        .main-with-artifact {
+            display: flex;
+            flex-direction: row !important;
+        }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .artifact-panel {
+            width: 500px;
+            background: white;
+            border-left: 2px solid #10b981;
+            display: none;
+            flex-direction: column;
+        }
+
+        .artifact-panel.show {
+            display: flex;
+        }
+
+        .artifact-header {
+            padding: 12px 16px;
+            background: #f0fdf4;
+            border-bottom: 1px solid #d1fae5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .artifact-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .artifact-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .artifact-btn {
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid #d1fae5;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #059669;
+            cursor: pointer;
+        }
+
+        .artifact-btn:hover {
+            background: #ecfdf5;
+        }
+
+        .artifact-content {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .artifact-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
         
         .header {
             padding: 14px 20px;
@@ -261,6 +334,120 @@
             line-height: 1.7;
             color: #1f2937;
             word-wrap: break-word;
+        }
+
+        .text h1, .text h2, .text h3 { 
+            margin-top: 16px; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            color: #065f46;
+        }
+        .text h1 { font-size: 24px; }
+        .text h2 { font-size: 20px; }
+        .text h3 { font-size: 16px; }
+        .text p { margin-bottom: 12px; }
+        .text ul, .text ol { 
+            margin-left: 24px; 
+            margin-bottom: 12px; 
+        }
+        .text li { margin-bottom: 6px; }
+        .text strong { font-weight: 600; color: #065f46; }
+        .text em { font-style: italic; }
+        .text code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .text pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 12px;
+        }
+        .text pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .text blockquote {
+            border-left: 3px solid #10b981;
+            padding-left: 12px;
+            margin: 12px 0;
+            color: #6b7280;
+        }
+        .text a {
+            color: #10b981;
+            text-decoration: underline;
+        }
+        .text a:hover {
+            color: #059669;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #10b981;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .artifact-preview {
+            margin: 16px 0;
+            padding: 16px;
+            background: white;
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .artifact-preview:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .artifact-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .artifact-preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .artifact-preview-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .artifact-preview-body {
+            height: 250px;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+
+        .artifact-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
         }
         
         .input-area {
@@ -366,6 +553,78 @@
             border-top: 1px solid #e5e7eb;
         }
 
+        .progress-container {
+            margin: 16px 0;
+            padding: 16px;
+            background: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 8px;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .progress-step.active {
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        .progress-step.complete {
+            color: #10b981;
+        }
+
+        .progress-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        .progress-step .progress-icon {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        .progress-step.active .progress-icon {
+            background: #10b981;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .progress-step.complete .progress-icon {
+            background: #10b981;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .progress-bar {
+            margin-top: 12px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
         .image-upload-area {
             margin-bottom: 12px;
             padding: 12px;
@@ -413,72 +672,6 @@
             color: #dc2626;
             font-size: 11px;
             cursor: pointer;
-        }
-
-        .artifact-card {
-            margin-top: 12px;
-            padding: 14px;
-            background: white;
-            border: 2px solid #10b981;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .artifact-card:hover {
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .artifact-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .artifact-card-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #065f46;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .artifact-card-actions {
-            display: flex;
-            gap: 4px;
-        }
-
-        .artifact-card-btn {
-            padding: 4px 8px;
-            background: #ecfdf5;
-            border: 1px solid #d1fae5;
-            border-radius: 4px;
-            font-size: 10px;
-            color: #059669;
-            cursor: pointer;
-        }
-
-        .artifact-card-btn:hover {
-            background: #d1fae5;
-        }
-
-        .artifact-card-preview {
-            width: 100%;
-            height: 200px;
-            border: 1px solid #d1fae5;
-            border-radius: 6px;
-            overflow: hidden;
-            background: #f9fafb;
-        }
-
-        .artifact-card-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: none;
         }
         
         .builder-text {
@@ -727,66 +920,83 @@
             </div>
         </div>
         
-        <div class="main">
-            <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
-                <div class="header">
-                    <div class="model" onclick="window.openModal('model')">
-                        <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;">C</span>
-                        <span id="modelName">Claude Sonnet 4.5</span>
-                        <span style="font-size:10px;color:#6b7280;">▼</span>
+        <div class="main" id="mainContainer">
+            <div class="chat-section">
+                <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
+                    <div class="header">
+                        <div class="model" onclick="window.openModal('model')">
+                            <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;">C</span>
+                            <span id="modelName">Claude Sonnet 4.5</span>
+                            <span style="font-size:10px;color:#6b7280;">▼</span>
+                        </div>
+                        <div class="actions">
+                            <button class="action" onclick="window.shareChat()">🔗 Share</button>
+                            <button class="action" onclick="window.dlChat()">📥 Download</button>
+                        </div>
                     </div>
-                    <div class="actions">
-                        <button class="action" onclick="window.shareChat()">🔗 Share</button>
-                        <button class="action" onclick="window.dlChat()">📥 Download</button>
+                    <div class="messages" id="msgs"></div>
+                    <div class="input-area">
+                        <div class="input-box">
+                            <textarea id="inp" class="input" placeholder="Ask me anything..."></textarea>
+                            <div class="input-footer">
+                                <div class="model-switch">
+                                    <button class="model-btn active" id="sonnetBtn" onclick="window.switchPromptModel('sonnet')" title="Claude Sonnet 4.5">Sonnet</button>
+                                    <button class="model-btn" id="opusBtn" onclick="window.switchPromptModel('opus')" title="Claude Opus 4">Opus</button>
+                                    <button class="model-btn" id="haikuBtn" onclick="window.switchPromptModel('haiku')" title="Claude Haiku 4.5">Haiku</button>
+                                </div>
+                                <button class="send" id="sendBtn" onclick="window.sendMsg()">Send</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="messages" id="msgs"></div>
-                <div class="input-area">
-                    <div class="input-box">
-                        <textarea id="inp" class="input" placeholder="Ask me anything..."></textarea>
-                        <div class="input-footer">
-                            <div class="model-switch">
-                                <button class="model-btn active" id="sonnetBtn" onclick="window.switchPromptModel('sonnet')" title="Claude Sonnet 4.5">Sonnet</button>
-                                <button class="model-btn" id="opusBtn" onclick="window.switchPromptModel('opus')" title="Claude Opus 4">Opus</button>
-                                <button class="model-btn" id="haikuBtn" onclick="window.switchPromptModel('haiku')" title="Claude Haiku 4.5">Haiku</button>
+                
+                <div id="builderView" class="builder" style="display:none;">
+                    <div class="builder-chat">
+                        <div class="builder-msgs" id="builderMsgs"></div>
+                        <div class="builder-input">
+                            <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
+                                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                                <div class="upload-label">
+                                    <span>📷 Upload image (screenshot, mockup, error)</span>
+                                </div>
+                                <img id="imagePreview" class="image-preview">
+                                <button id="removeImg" class="remove-image" style="display:none;">✕ Remove</button>
                             </div>
-                            <button class="send" id="sendBtn" onclick="window.sendMsg()">Send</button>
+                            <textarea id="builderInp" class="builder-text" placeholder="Describe what you want to build or improve..."></textarea>
+                            <button class="build-btn" onclick="window.buildApp()">Build / Improve</button>
+                        </div>
+                    </div>
+                    <div class="preview">
+                        <div class="preview-header">
+                            <div class="tabs">
+                                <button class="tab active" id="previewTab" onclick="window.showPreview()">👁️ Preview</button>
+                                <button class="tab" id="codeTab" onclick="window.showCode()">💻 Code</button>
+                            </div>
+                            <button class="action" id="dlApp" onclick="window.dlApp()" style="display:none;">📥 Download</button>
+                        </div>
+                        <div class="preview-body" id="preview">
+                            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;flex-direction:column;">
+                                <div style="font-size:48px;margin-bottom:12px;">🌿</div>
+                                <div>Describe an app to start building</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div id="builderView" class="builder" style="display:none;">
-                <div class="builder-chat">
-                    <div class="builder-msgs" id="builderMsgs"></div>
-                    <div class="builder-input">
-                        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
-                            <input type="file" id="imageInput" accept="image/*" style="display:none;">
-                            <div class="upload-label">
-                                <span>📷 Upload image (screenshot, mockup, error)</span>
-                            </div>
-                            <img id="imagePreview" class="image-preview">
-                            <button id="removeImg" class="remove-image" style="display:none;">✕ Remove</button>
-                        </div>
-                        <textarea id="builderInp" class="builder-text" placeholder="Describe app or upload screenshot to improve..."></textarea>
-                        <button class="build-btn" onclick="window.buildApp()">Build App</button>
+
+            <div class="artifact-panel" id="artifactPanel">
+                <div class="artifact-header">
+                    <div class="artifact-title">
+                        <span>📱</span>
+                        <span id="artifactPanelTitle">Artifact</span>
+                    </div>
+                    <div class="artifact-actions">
+                        <button class="artifact-btn" onclick="window.copyArtifactCode()">📋 Copy</button>
+                        <button class="artifact-btn" onclick="window.downloadArtifact()">📥 Download</button>
+                        <button class="artifact-btn" onclick="window.closeArtifactPanel()">✕</button>
                     </div>
                 </div>
-                <div class="preview">
-                    <div class="preview-header">
-                        <div class="tabs">
-                            <button class="tab active" id="previewTab" onclick="window.showPreview()">👁️ Preview</button>
-                            <button class="tab" id="codeTab" onclick="window.showCode()">💻 Code</button>
-                        </div>
-                        <button class="action" id="dlApp" onclick="window.dlApp()" style="display:none;">📥 Download</button>
-                    </div>
-                    <div class="preview-body" id="preview">
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;flex-direction:column;">
-                            <div style="font-size:48px;margin-bottom:12px;">🌿</div>
-                            <div>Describe an app to start</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="artifact-content" id="artifactPanelContent"></div>
             </div>
         </div>
     </div>
@@ -799,16 +1009,22 @@
         let usage = JSON.parse(localStorage.getItem('usage') || '{"tokens":0,"calls":0,"cost":0}');
         let currentChatId = null;
         let appCode = '';
+        let currentArtifactId = null;
         let uploadedImage = null;
         let uploadedImageData = null;
         let globalModel = localStorage.getItem('globalModel') || 'claude-sonnet-4-20250514';
         let globalModelName = localStorage.getItem('globalModelName') || 'Claude Sonnet 4.5';
         let promptModel = 'sonnet';
+        let currentAppDescription = '';
         
-        // Auto-detect API endpoint (works on localhost and production)
         const API_ENDPOINT = window.location.hostname === 'localhost' 
             ? 'http://localhost:3000/api/anthropic'
             : window.location.origin + '/api/anthropic';
+        
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
         
         window.init = function() {
             document.getElementById('modelName').textContent = globalModelName;
@@ -897,6 +1113,38 @@
             
             return await res.json();
         }
+
+        window.showArtifactPanel = function(code, title) {
+            document.getElementById('mainContainer').classList.add('main-with-artifact');
+            document.getElementById('artifactPanel').classList.add('show');
+            document.getElementById('artifactPanelTitle').textContent = title;
+            document.getElementById('artifactPanelContent').innerHTML = '<iframe class="artifact-iframe" srcdoc="' + code.replace(/"/g, '&quot;') + '"></iframe>';
+        };
+
+        window.closeArtifactPanel = function() {
+            document.getElementById('mainContainer').classList.remove('main-with-artifact');
+            document.getElementById('artifactPanel').classList.remove('show');
+        };
+
+        window.copyArtifactCode = function() {
+            if (currentArtifactId && artifactsData[currentArtifactId]) {
+                navigator.clipboard.writeText(artifactsData[currentArtifactId].content);
+                alert('✅ Code copied to clipboard!');
+            }
+        };
+
+        window.downloadArtifact = function() {
+            if (currentArtifactId && artifactsData[currentArtifactId]) {
+                const art = artifactsData[currentArtifactId];
+                const blob = new Blob([art.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = art.title.replace(/\s/g, '-') + '.html';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        };
         
         window.createProject = function() {
             const name = document.getElementById('projectName').value.trim();
@@ -957,12 +1205,13 @@
             document.getElementById('chatView').style.display = 'flex';
             document.getElementById('builderView').style.display = 'none';
             document.getElementById('agentBtn').classList.remove('active');
+            closeArtifactPanel();
             
             const msgs = document.getElementById('msgs');
             msgs.innerHTML = '';
             if (chatsData[id] && chatsData[id].msgs) {
                 chatsData[id].msgs.forEach(function(m) {
-                    addMsg(m.role, m.content, false);
+                    addMsg(m.role, m.content, false, null, m.artifactId);
                 });
             }
             
@@ -970,23 +1219,110 @@
             updateAll();
         };
         
-        function addMsg(role, content, save) {
+        function addMsg(role, content, save, streamId, artifactId) {
             if (save === undefined) save = true;
             const msgs = document.getElementById('msgs');
-            const div = document.createElement('div');
-            div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-            div.innerHTML = '<div class="label">' + (role === 'user' ? 'YOU' : 'FEREN AI') + '</div><div class="text">' + content + '</div>';
-            msgs.appendChild(div);
+            
+            let div;
+            if (streamId) {
+                div = document.getElementById(streamId);
+                if (!div) {
+                    div = document.createElement('div');
+                    div.id = streamId;
+                    div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+                    div.innerHTML = '<div class="label">' + (role === 'user' ? 'YOU' : 'FEREN AI') + '</div><div class="text"></div>';
+                    msgs.appendChild(div);
+                }
+            } else {
+                div = document.createElement('div');
+                div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+                div.innerHTML = '<div class="label">' + (role === 'user' ? 'YOU' : 'FEREN AI') + '</div><div class="text"></div>';
+                msgs.appendChild(div);
+            }
+            
+            const textDiv = div.querySelector('.text');
+            if (role === 'assistant' && !streamId) {
+                textDiv.innerHTML = marked.parse(content);
+                
+                if (artifactId && artifactsData[artifactId]) {
+                    const art = artifactsData[artifactId];
+                    textDiv.innerHTML += '<div class="artifact-preview" onclick="window.viewArtifact(\'' + artifactId + '\')"><div class="artifact-preview-header"><div class="artifact-preview-title"><span>📱</span><span>' + art.title + '</span></div><div class="artifact-preview-actions"><button class="artifact-btn" onclick="event.stopPropagation();window.copyArtCode(\'' + artifactId + '\')">📋</button><button class="artifact-btn" onclick="event.stopPropagation();window.dlArtifact(\'' + artifactId + '\')">📥</button></div></div><div class="artifact-preview-body"><iframe class="artifact-preview-iframe" srcdoc="' + art.content.replace(/"/g, '&quot;') + '"></iframe></div></div>';
+                }
+            } else {
+                textDiv.innerHTML = content;
+            }
+            
             msgs.scrollTop = msgs.scrollHeight;
             
-            if (save && currentChatId) {
+            if (save && currentChatId && !streamId) {
                 if (!chatsData[currentChatId].msgs) {
                     chatsData[currentChatId].msgs = [];
                 }
-                chatsData[currentChatId].msgs.push({ role: role, content: content });
+                chatsData[currentChatId].msgs.push({ role: role, content: content, artifactId: artifactId });
                 if (role === 'user' && chatsData[currentChatId].msgs.length === 1) {
                     chatsData[currentChatId].title = content.substring(0, 40);
                 }
+                localStorage.setItem('chats', JSON.stringify(chatsData));
+                updateAll();
+            }
+        }
+
+        window.viewArtifact = function(id) {
+            if (artifactsData[id]) {
+                currentArtifactId = id;
+                showArtifactPanel(artifactsData[id].content, artifactsData[id].title);
+            }
+        };
+
+        window.copyArtCode = function(id) {
+            if (artifactsData[id]) {
+                navigator.clipboard.writeText(artifactsData[id].content);
+                alert('✅ Code copied!');
+            }
+        };
+
+        window.dlArtifact = function(id) {
+            if (artifactsData[id]) {
+                const art = artifactsData[id];
+                const blob = new Blob([art.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = art.title.replace(/\s/g, '-') + '.html';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        async function streamText(text, streamId, artifactId) {
+            const msgs = document.getElementById('msgs');
+            const streamDiv = document.getElementById(streamId);
+            const textDiv = streamDiv.querySelector('.text');
+            
+            let currentText = '';
+            const words = text.split(' ');
+            
+            for (let i = 0; i < words.length; i++) {
+                currentText += (i > 0 ? ' ' : '') + words[i];
+                textDiv.innerHTML = marked.parse(currentText) + '<span class="typing-cursor"></span>';
+                msgs.scrollTop = msgs.scrollHeight;
+                await new Promise(resolve => setTimeout(resolve, 30));
+            }
+            
+            textDiv.innerHTML = marked.parse(currentText);
+
+            if (artifactId && artifactsData[artifactId]) {
+                const art = artifactsData[artifactId];
+                textDiv.innerHTML += '<div class="artifact-preview" onclick="window.viewArtifact(\'' + artifactId + '\')"><div class="artifact-preview-header"><div class="artifact-preview-title"><span>📱</span><span>' + art.title + '</span></div><div class="artifact-preview-actions"><button class="artifact-btn" onclick="event.stopPropagation();window.copyArtCode(\'' + artifactId + '\')">📋</button><button class="artifact-btn" onclick="event.stopPropagation();window.dlArtifact(\'' + artifactId + '\')">📥</button></div></div><div class="artifact-preview-body"><iframe class="artifact-preview-iframe" srcdoc="' + art.content.replace(/"/g, '&quot;') + '"></iframe></div></div>';
+            }
+            
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            if (currentChatId) {
+                if (!chatsData[currentChatId].msgs) {
+                    chatsData[currentChatId].msgs = [];
+                }
+                chatsData[currentChatId].msgs.push({ role: 'assistant', content: text, artifactId: artifactId });
                 localStorage.setItem('chats', JSON.stringify(chatsData));
                 updateAll();
             }
@@ -1004,11 +1340,15 @@
             btn.disabled = true;
             btn.textContent = '...';
             
+            const streamId = 'stream-' + Date.now();
+            addMsg('assistant', '', false, streamId);
+            
             try {
                 const data = await callAnthropicAPI([{ role: 'user', content: text }], 2048);
                 
                 if (data.error) {
-                    addMsg('assistant', 'Error: ' + (data.error.message || JSON.stringify(data.error)));
+                    const streamDiv = document.getElementById(streamId);
+                    streamDiv.querySelector('.text').innerHTML = 'Error: ' + (data.error.message || JSON.stringify(data.error));
                 } else {
                     const reply = data.content[0].text;
                     
@@ -1020,11 +1360,14 @@
                         updateAll();
                     }
                     
-                    addMsg('assistant', reply);
+                    await streamText(reply, streamId);
                     switchPromptModel('sonnet');
                 }
             } catch (e) {
-                addMsg('assistant', 'Error: ' + e.message);
+                const streamDiv = document.getElementById(streamId);
+                if (streamDiv) {
+                    streamDiv.querySelector('.text').innerHTML = 'Error: ' + e.message;
+                }
             }
             
             btn.disabled = false;
@@ -1086,13 +1429,15 @@
             
             openAgent();
             appCode = art.content;
+            currentAppDescription = art.title;
+            currentArtifactId = id;
             
             setTimeout(function() {
                 document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + art.content.replace(/"/g, '&quot;') + '"></iframe>';
                 document.getElementById('dlApp').style.display = 'block';
                 
                 const msgs = document.getElementById('builderMsgs');
-                msgs.innerHTML = '<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>' + art.title + '</strong><br><em style="font-size:12px;color:#6b7280;">You can now improve it!</em></div></div>';
+                msgs.innerHTML = '<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>' + art.title + '</strong><br><em style="font-size:12px;color:#6b7280;">💡 Tell me what to improve, fix, or change!</em></div></div>';
             }, 100);
             
             document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
@@ -1173,13 +1518,55 @@
             document.getElementById('removeImg').style.display = 'none';
             document.getElementById('imageInput').value = '';
         }
+
+        function showProgress(steps) {
+            let html = '<div class="progress-container">';
+            steps.forEach(function(step, i) {
+                const state = step.state || 'pending';
+                html += '<div class="progress-step ' + state + '"><div class="progress-icon">';
+                if (state === 'complete') html += '✓';
+                else if (state === 'active') html += '⟳';
+                else html += (i + 1);
+                html += '</div><span>' + step.text + '</span></div>';
+            });
+            html += '<div class="progress-bar"><div class="progress-bar-fill" style="width:' + (steps.filter(function(s) { return s.state === 'complete'; }).length / steps.length * 100) + '%"></div></div>';
+            html += '</div>';
+            return html;
+        }
+
+        async function updateProgress(progressId, stepIndex) {
+            const progressDiv = document.getElementById(progressId);
+            if (!progressDiv) return;
+            
+            const steps = [
+                { text: '🔍 Analyzing request', state: stepIndex >= 0 ? (stepIndex > 0 ? 'complete' : 'active') : 'pending' },
+                { text: '📋 Planning changes', state: stepIndex >= 1 ? (stepIndex > 1 ? 'complete' : 'active') : 'pending' },
+                { text: '🎨 Updating design', state: stepIndex >= 2 ? (stepIndex > 2 ? 'complete' : 'active') : 'pending' },
+                { text: '🤖 Generating code', state: stepIndex >= 3 ? (stepIndex > 3 ? 'complete' : 'active') : 'pending' },
+                { text: '✅ Finalizing', state: stepIndex >= 4 ? 'complete' : 'pending' }
+            ];
+            
+            progressDiv.innerHTML = showProgress(steps);
+        }
         
         window.buildApp = async function() {
             const inp = document.getElementById('builderInp');
             const text = inp.value.trim();
             
             if (!api) { openModal('settings'); return; }
-            if (!text && !uploadedImage) { alert('Describe app or upload image'); return; }
+            if (!text && !uploadedImage) { alert('Describe what you want to build or improve'); return; }
+            
+            const isIteration = appCode && (
+                text.toLowerCase().includes('fix') ||
+                text.toLowerCase().includes('improve') ||
+                text.toLowerCase().includes('change') ||
+                text.toLowerCase().includes('add') ||
+                text.toLowerCase().includes('modify') ||
+                text.toLowerCase().includes('update') ||
+                text.toLowerCase().includes('make') ||
+                text.toLowerCase().includes('better') ||
+                text.toLowerCase().includes('different')
+            );
             
             const msgs = document.getElementById('builderMsgs');
             
@@ -1198,12 +1585,33 @@
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg ai';
             aiDiv.id = 'building';
-            aiDiv.innerHTML = '<div class="label">FEREN AI</div><div class="text">🔍 Building your app...</div>';
+            const progressId = 'progress-' + Date.now();
+            aiDiv.innerHTML = '<div class="label">FEREN AI</div><div class="text"><div id="' + progressId + '"></div></div>';
             msgs.appendChild(aiDiv);
             msgs.scrollTop = msgs.scrollHeight;
             
+            await updateProgress(progressId, 0);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await updateProgress(progressId, 1);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await updateProgress(progressId, 2);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await updateProgress(progressId, 3);
+            
             try {
-                let messageContent = 'Create HTML app: ' + text + '\n\nGREEN theme (#10b981), fully functional, single file. Return ONLY HTML.';
+                let messageContent;
+                
+                if (isIteration && appCode) {
+                    messageContent = 'Current app:\n```html\n' + appCode + '\n```\n\nUser feedback: "' + text + '"\n\nModify the existing app based on the feedback. Keep what works, improve what needs fixing. Return ONLY the updated complete HTML.';
+                } else if (appCode && currentAppDescription) {
+                    messageContent = 'Build upon this app:\n```html\n' + appCode + '\n```\n\nDescription: ' + currentAppDescription + '\n\nUser request: "' + text + '"\n\nExtend and improve the app. Return ONLY the complete updated HTML.';
+                } else {
+                    currentAppDescription = text;
+                    messageContent = 'Create an HTML app: ' + text + '\n\nRequirements:\n- GREEN theme (#10b981)\n- Fully functional\n- Single HTML file\n- Modern design\n\nReturn ONLY HTML code.';
+                }
                 
                 let messages = [];
                 if (uploadedImageData) {
@@ -1227,22 +1635,31 @@
                     return;
                 }
                 
-                let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
+                await updateProgress(progressId, 4);
                 
+                let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
                 appCode = code;
                 
-                const artId = 'app' + Date.now();
+                const artId = currentArtifactId || ('app' + Date.now());
+                const artTitle = currentAppDescription || text.substring(0, 40);
+                
                 artifactsData[artId] = {
                     id: artId,
                     type: 'html',
-                    title: text.substring(0, 40),
+                    title: artTitle,
                     content: code,
-                    created: Date.now()
+                    created: artifactsData[artId] ? artifactsData[artId].created : Date.now(),
+                    updated: Date.now()
                 };
+                currentArtifactId = artId;
+                
                 localStorage.setItem('artifacts', JSON.stringify(artifactsData));
                 updateAll();
                 
-                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text"><div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ Built Successfully!</div></div>';
+                const statusText = isIteration ? '✨ Updated Successfully!' : '✨ Built Successfully!';
+                const tipText = isIteration ? 'Keep improving: "make it faster", "add dark mode", etc.' : 'Want changes? Say: "fix the button", "add animation", etc.';
+                
+                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text"><div style="color:#065f46;font-weight:600;margin-bottom:8px;">' + statusText + '</div><em style="font-size:12px;color:#6b7280;">💡 ' + tipText + '</em></div>';
                 
                 document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + code.replace(/"/g, '&quot;') + '"></iframe>';
                 document.getElementById('dlApp').style.display = 'block';
