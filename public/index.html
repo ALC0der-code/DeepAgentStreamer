@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feren.AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .app { display: flex; height: 100vh; }
+        
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #065f46, #064e3b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 20px;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+        
+        .section-btns { display: flex; gap: 4px; }
+        
+        .section-btn {
+            width: 22px;
+            height: 22px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        
+        .section-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        .item {
+            padding: 8px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .item:hover { background: rgba(255,255,255,0.15); }
+        .item.active { background: rgba(255,255,255,0.25); font-weight: 600; }
+        
+        .item-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .dots {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .dots:hover { background: rgba(255,255,255,0.4); }
+        
+        .dropdown {
+            position: absolute;
+            right: 30px;
+            top: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 100;
+            min-width: 150px;
+        }
+        
+        .dropdown.show { display: block; }
+        
+        .drop-btn {
+            width: 100%;
+            padding: 10px 14px;
+            background: white;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+            color: #1f2937;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .drop-btn:hover { background: #f3f4f6; }
+        
+        .agent-btn {
+            margin: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .agent-btn:hover { background: rgba(255,255,255,0.3); }
+        .agent-btn.active { background: white; color: #065f46; }
+        
+        .usage {
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            margin: 0 16px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+        
+        .usage div { display: flex; justify-content: space-between; margin: 4px 0; }
+        
+        .footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .settings {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .settings:hover { background: rgba(255,255,255,0.25); }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f5f5dc;
+        }
+        
+        .header {
+            padding: 14px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .model {
+            padding: 6px 12px;
+            background: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            color: #065f46;
+            transition: all 0.2s;
+        }
+        
+        .model:hover {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+        
+        .actions { display: flex; gap: 8px; }
+        
+        .action {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .action:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 20px;
+            scroll-behavior: smooth;
+        }
+        
+        .msg {
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+        
+        .msg.user {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border-left: 3px solid #10b981;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .msg.ai {
+            background: #ecfdf5;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border-left: 3px solid #059669;
+        }
+        
+        .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        
+        .text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #1f2937;
+            word-wrap: break-word;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: #f5f5dc;
+        }
+        
+        .input-box {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #d1fae5;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.1);
+        }
+        
+        .input {
+            width: 100%;
+            min-height: 100px;
+            border: none;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            color: #1f2937;
+        }
+        
+        .input:focus { outline: none; }
+        
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .model-switch {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .model-btn {
+            padding: 5px 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .model-btn:hover {
+            background: #f0fdf4;
+            border-color: #10b981;
+            color: #059669;
+        }
+
+        .model-btn.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .send {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .send:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .builder {
+            display: flex;
+            height: 100%;
+        }
+        
+        .builder-chat {
+            width: 400px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .builder-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .builder-input {
+            padding: 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .image-upload-area {
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 2px dashed #d1fae5;
+            border-radius: 8px;
+            background: #f0fdf4;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .image-upload-area:hover {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .image-upload-area.has-image {
+            border-style: solid;
+            border-color: #10b981;
+        }
+
+        .upload-label {
+            font-size: 12px;
+            color: #059669;
+        }
+
+        .image-preview {
+            margin-top: 8px;
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        .remove-image {
+            margin-top: 6px;
+            padding: 4px 10px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            color: #dc2626;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .artifact-card {
+            margin-top: 12px;
+            padding: 14px;
+            background: white;
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .artifact-card:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .artifact-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .artifact-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .artifact-card-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .artifact-card-btn {
+            padding: 4px 8px;
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #059669;
+            cursor: pointer;
+        }
+
+        .artifact-card-btn:hover {
+            background: #d1fae5;
+        }
+
+        .artifact-card-preview {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+
+        .artifact-card-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
+        
+        .builder-text {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            min-height: 70px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .builder-text:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .build-btn {
+            margin-top: 8px;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .build-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .preview {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-header {
+            padding: 10px 16px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .tabs { display: flex; gap: 4px; }
+        
+        .tab {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .tab.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .preview-body {
+            flex: 1;
+            background: white;
+        }
+        
+        .frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.show { display: flex; }
+        
+        .modal-box {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 16px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .modal-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .btn-primary { background: #10b981; color: white; }
+        .btn-secondary { background: #f3f4f6; color: #6b7280; }
+        .btn:hover { opacity: 0.9; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div id="modelModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-title">🤖 Select AI Model</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+                <div onclick="window.selectGlobalModel('claude-sonnet-4-20250514','Claude Sonnet 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
+                    <div style="width:32px;height:32px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">C</div>
+                    <div>
+                        <div style="font-weight:600;color:#065f46;">Claude Sonnet 4.5</div>
+                        <div style="font-size:11px;color:#6b7280;">Balanced speed & intelligence</div>
+                    </div>
+                </div>
+                <div onclick="window.selectGlobalModel('claude-opus-4-20250514','Claude Opus 4')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
+                    <div style="width:32px;height:32px;background:#7c3aed;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">O</div>
+                    <div>
+                        <div style="font-weight:600;color:#065f46;">Claude Opus 4</div>
+                        <div style="font-size:11px;color:#6b7280;">Most powerful model</div>
+                    </div>
+                </div>
+                <div onclick="window.selectGlobalModel('claude-haiku-4-20250514','Claude Haiku 4.5')" style="padding:12px;background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;cursor:pointer;display:flex;gap:12px;transition:all 0.2s;">
+                    <div style="width:32px;height:32px;background:#06b6d4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px;">H</div>
+                    <div>
+                        <div style="font-weight:600;color:#065f46;">Claude Haiku 4.5</div>
+                        <div style="font-size:11px;color:#6b7280;">Fastest & most affordable</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="window.closeModal('model')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-title">⚙️ Settings</div>
+            <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Anthropic API Key</label>
+            <input type="password" id="apiKey" class="form-input" placeholder="sk-ant-api03-...">
+            <div style="padding:10px;background:#ecfdf5;border:1px solid #d1fae5;border-radius:6px;font-size:11px;color:#065f46;">
+                ✅ API endpoint auto-configured
+            </div>
+            <div class="modal-btns" style="margin-top:16px;">
+                <button class="btn btn-secondary" onclick="window.closeModal('settings')">Cancel</button>
+                <button class="btn btn-primary" onclick="window.saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="projectModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-title">📁 New Project</div>
+            <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Project Name</label>
+            <input type="text" id="projectName" class="form-input" placeholder="My Project">
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="window.closeModal('project')">Cancel</button>
+                <button class="btn btn-primary" onclick="window.createProject()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <div class="sidebar">
+            <div class="logo">🌿 FEREN.AI</div>
+            
+            <div style="flex:1;overflow-y:auto;">
+                <div class="section">
+                    <div class="section-header">
+                        <span>Projects</span>
+                        <div class="section-btns">
+                            <button class="section-btn" onclick="window.openModal('project')">+</button>
+                        </div>
+                    </div>
+                    <div id="projects"></div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header">
+                        <span>Chats</span>
+                        <div class="section-btns">
+                            <button class="section-btn" onclick="window.newChat()">+</button>
+                        </div>
+                    </div>
+                    <div id="chats"></div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-header"><span>Artifacts</span></div>
+                    <div id="artifacts"></div>
+                </div>
+            </div>
+            
+            <button class="agent-btn" id="agentBtn" onclick="window.openAgent()">
+                🤖 FerenAgent
+            </button>
+            
+            <div class="usage">
+                <div><span>Tokens</span><span id="tokens">0</span></div>
+                <div><span>Calls</span><span id="calls">0</span></div>
+                <div><span>Cost</span><span id="cost">$0.00</span></div>
+            </div>
+            
+            <div class="footer">
+                <button class="settings" onclick="window.openModal('settings')">⚙️ Settings</button>
+            </div>
+        </div>
+        
+        <div class="main">
+            <div id="chatView" style="display:flex;flex-direction:column;height:100%;">
+                <div class="header">
+                    <div class="model" onclick="window.openModal('model')">
+                        <span style="width:20px;height:20px;background:#10b981;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;">C</span>
+                        <span id="modelName">Claude Sonnet 4.5</span>
+                        <span style="font-size:10px;color:#6b7280;">▼</span>
+                    </div>
+                    <div class="actions">
+                        <button class="action" onclick="window.shareChat()">🔗 Share</button>
+                        <button class="action" onclick="window.dlChat()">📥 Download</button>
+                    </div>
+                </div>
+                <div class="messages" id="msgs"></div>
+                <div class="input-area">
+                    <div class="input-box">
+                        <textarea id="inp" class="input" placeholder="Ask me anything..."></textarea>
+                        <div class="input-footer">
+                            <div class="model-switch">
+                                <button class="model-btn active" id="sonnetBtn" onclick="window.switchPromptModel('sonnet')" title="Claude Sonnet 4.5">Sonnet</button>
+                                <button class="model-btn" id="opusBtn" onclick="window.switchPromptModel('opus')" title="Claude Opus 4">Opus</button>
+                                <button class="model-btn" id="haikuBtn" onclick="window.switchPromptModel('haiku')" title="Claude Haiku 4.5">Haiku</button>
+                            </div>
+                            <button class="send" id="sendBtn" onclick="window.sendMsg()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="builderView" class="builder" style="display:none;">
+                <div class="builder-chat">
+                    <div class="builder-msgs" id="builderMsgs"></div>
+                    <div class="builder-input">
+                        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
+                            <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                            <div class="upload-label">
+                                <span>📷 Upload image (screenshot, mockup, error)</span>
+                            </div>
+                            <img id="imagePreview" class="image-preview">
+                            <button id="removeImg" class="remove-image" style="display:none;">✕ Remove</button>
+                        </div>
+                        <textarea id="builderInp" class="builder-text" placeholder="Describe app or upload screenshot to improve..."></textarea>
+                        <button class="build-btn" onclick="window.buildApp()">Build App</button>
+                    </div>
+                </div>
+                <div class="preview">
+                    <div class="preview-header">
+                        <div class="tabs">
+                            <button class="tab active" id="previewTab" onclick="window.showPreview()">👁️ Preview</button>
+                            <button class="tab" id="codeTab" onclick="window.showCode()">💻 Code</button>
+                        </div>
+                        <button class="action" id="dlApp" onclick="window.dlApp()" style="display:none;">📥 Download</button>
+                    </div>
+                    <div class="preview-body" id="preview">
+                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;flex-direction:column;">
+                            <div style="font-size:48px;margin-bottom:12px;">🌿</div>
+                            <div>Describe an app to start</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let api = localStorage.getItem('api') || '';
+        let chatsData = JSON.parse(localStorage.getItem('chats') || '{}');
+        let projectsData = JSON.parse(localStorage.getItem('projects') || '{}');
+        let artifactsData = JSON.parse(localStorage.getItem('artifacts') || '{}');
+        let usage = JSON.parse(localStorage.getItem('usage') || '{"tokens":0,"calls":0,"cost":0}');
+        let currentChatId = null;
+        let appCode = '';
+        let uploadedImage = null;
+        let uploadedImageData = null;
+        let globalModel = localStorage.getItem('globalModel') || 'claude-sonnet-4-20250514';
+        let globalModelName = localStorage.getItem('globalModelName') || 'Claude Sonnet 4.5';
+        let promptModel = 'sonnet';
+        
+        // Auto-detect API endpoint (works on localhost and production)
+        const API_ENDPOINT = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api/anthropic'
+            : window.location.origin + '/api/anthropic';
+        
+        window.init = function() {
+            document.getElementById('modelName').textContent = globalModelName;
+            updateAll();
+            if (!api) openModal('settings');
+            else newChat();
+            
+            document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+            document.getElementById('removeImg').addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeImage();
+            });
+            document.getElementById('inp').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    window.sendMsg();
+                }
+            });
+        };
+        
+        function updateAll() {
+            updateProjects();
+            updateChats();
+            updateArtifacts();
+            document.getElementById('tokens').textContent = usage.tokens;
+            document.getElementById('calls').textContent = usage.calls;
+            document.getElementById('cost').textContent = '$' + usage.cost.toFixed(4);
+        }
+        
+        window.openModal = function(type) {
+            document.getElementById(type + 'Modal').classList.add('show');
+        };
+        
+        window.closeModal = function(type) {
+            document.getElementById(type + 'Modal').classList.remove('show');
+        };
+        
+        window.saveSettings = function() {
+            api = document.getElementById('apiKey').value.trim();
+            if (api) {
+                localStorage.setItem('api', api);
+                closeModal('settings');
+                if (Object.keys(chatsData).length === 0) newChat();
+            }
+        };
+        
+        window.selectGlobalModel = function(modelId, modelName) {
+            globalModel = modelId;
+            globalModelName = modelName;
+            document.getElementById('modelName').textContent = modelName;
+            localStorage.setItem('globalModel', modelId);
+            localStorage.setItem('globalModelName', modelName);
+            closeModal('model');
+        };
+        
+        window.switchPromptModel = function(type) {
+            promptModel = type;
+            document.getElementById('sonnetBtn').classList.remove('active');
+            document.getElementById('opusBtn').classList.remove('active');
+            document.getElementById('haikuBtn').classList.remove('active');
+            document.getElementById(type + 'Btn').classList.add('active');
+        };
+        
+        function getModelForRequest() {
+            const modelMap = {
+                'sonnet': 'claude-sonnet-4-20250514',
+                'opus': 'claude-opus-4-20250514',
+                'haiku': 'claude-haiku-4-20250514'
+            };
+            return modelMap[promptModel] || globalModel;
+        }
+
+        async function callAnthropicAPI(messages, max_tokens) {
+            const modelToUse = getModelForRequest();
+            
+            const res = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    apiKey: api,
+                    model: modelToUse,
+                    messages: messages,
+                    max_tokens: max_tokens
+                })
+            });
+            
+            return await res.json();
+        }
+        
+        window.createProject = function() {
+            const name = document.getElementById('projectName').value.trim();
+            if (name) {
+                const id = 'p' + Date.now();
+                projectsData[id] = { id: id, name: name, created: Date.now(), apps: [] };
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                document.getElementById('projectName').value = '';
+                updateAll();
+                closeModal('project');
+            }
+        };
+        
+        function updateProjects() {
+            const html = Object.values(projectsData).slice(0,5).map(function(p) {
+                return '<div class="item"><span>📁</span><span class="item-text">' + p.name + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'p' + p.id + '\')">⋮</button><div class="dropdown" id="dp' + p.id + '"><button class="drop-btn" onclick="window.editProject(\'' + p.id + '\')">✏️ Edit</button><button class="drop-btn" onclick="window.delProject(\'' + p.id + '\')">🗑️ Delete</button></div></div>';
+            }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No projects</div>';
+            document.getElementById('projects').innerHTML = html;
+        }
+        
+        window.editProject = function(id) {
+            const name = prompt('New name:', projectsData[id].name);
+            if (name) {
+                projectsData[id].name = name;
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.delProject = function(id) {
+            if (confirm('Delete project?')) {
+                delete projectsData[id];
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        function updateChats() {
+            const html = Object.values(chatsData).slice(0,10).map(function(c) {
+                const active = currentChatId === c.id ? 'active' : '';
+                return '<div class="item ' + active + '" onclick="window.loadChat(\'' + c.id + '\')"><span>💬</span><span class="item-text">' + c.title + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'c' + c.id + '\')">⋮</button><div class="dropdown" id="dc' + c.id + '"><button class="drop-btn" onclick="window.editChat(\'' + c.id + '\')">✏️ Edit</button><button class="drop-btn" onclick="window.delChat(\'' + c.id + '\')">🗑️ Delete</button></div></div>';
+            }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No chats</div>';
+            document.getElementById('chats').innerHTML = html;
+        }
+        
+        window.newChat = function() {
+            const id = 'c' + Date.now();
+            chatsData[id] = { id: id, title: 'New Chat', msgs: [], created: Date.now() };
+            currentChatId = id;
+            localStorage.setItem('chats', JSON.stringify(chatsData));
+            loadChat(id);
+        };
+        
+        window.loadChat = function(id) {
+            currentChatId = id;
+            document.getElementById('chatView').style.display = 'flex';
+            document.getElementById('builderView').style.display = 'none';
+            document.getElementById('agentBtn').classList.remove('active');
+            
+            const msgs = document.getElementById('msgs');
+            msgs.innerHTML = '';
+            if (chatsData[id] && chatsData[id].msgs) {
+                chatsData[id].msgs.forEach(function(m) {
+                    addMsg(m.role, m.content, false);
+                });
+            }
+            
+            switchPromptModel('sonnet');
+            updateAll();
+        };
+        
+        function addMsg(role, content, save) {
+            if (save === undefined) save = true;
+            const msgs = document.getElementById('msgs');
+            const div = document.createElement('div');
+            div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+            div.innerHTML = '<div class="label">' + (role === 'user' ? 'YOU' : 'FEREN AI') + '</div><div class="text">' + content + '</div>';
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            if (save && currentChatId) {
+                if (!chatsData[currentChatId].msgs) {
+                    chatsData[currentChatId].msgs = [];
+                }
+                chatsData[currentChatId].msgs.push({ role: role, content: content });
+                if (role === 'user' && chatsData[currentChatId].msgs.length === 1) {
+                    chatsData[currentChatId].title = content.substring(0, 40);
+                }
+                localStorage.setItem('chats', JSON.stringify(chatsData));
+                updateAll();
+            }
+        }
+        
+        window.sendMsg = async function() {
+            const inp = document.getElementById('inp');
+            const text = inp.value.trim();
+            if (!text || !api) return;
+            
+            addMsg('user', text);
+            inp.value = '';
+            
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.textContent = '...';
+            
+            try {
+                const data = await callAnthropicAPI([{ role: 'user', content: text }], 2048);
+                
+                if (data.error) {
+                    addMsg('assistant', 'Error: ' + (data.error.message || JSON.stringify(data.error)));
+                } else {
+                    const reply = data.content[0].text;
+                    
+                    if (data.usage) {
+                        usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
+                        usage.calls++;
+                        usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
+                        localStorage.setItem('usage', JSON.stringify(usage));
+                        updateAll();
+                    }
+                    
+                    addMsg('assistant', reply);
+                    switchPromptModel('sonnet');
+                }
+            } catch (e) {
+                addMsg('assistant', 'Error: ' + e.message);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Send';
+        };
+        
+        window.editChat = function(id) {
+            const name = prompt('New title:', chatsData[id].title);
+            if (name) {
+                chatsData[id].title = name;
+                localStorage.setItem('chats', JSON.stringify(chatsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.delChat = function(id) {
+            if (confirm('Delete chat?')) {
+                delete chatsData[id];
+                if (currentChatId === id) newChat();
+                localStorage.setItem('chats', JSON.stringify(chatsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.shareChat = function() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('✅ Share link copied!');
+        };
+        
+        window.dlChat = function() {
+            if (!currentChatId || !chatsData[currentChatId]) return;
+            const chat = chatsData[currentChatId];
+            let md = '# ' + chat.title + '\n\n';
+            chat.msgs.forEach(function(m) {
+                md += '## ' + (m.role === 'user' ? 'You' : 'Feren AI') + '\n' + m.content + '\n\n';
+            });
+            const blob = new Blob([md], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chat-' + Date.now() + '.md';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        function updateArtifacts() {
+            const html = Object.values(artifactsData).slice(0,10).map(function(a) {
+                const icon = a.type === 'html' ? '📱' : a.type === 'mermaid' ? '📊' : '💻';
+                return '<div class="item" onclick="window.openArtInBuilder(\'' + a.id + '\')"><span>' + icon + '</span><span class="item-text">' + a.title + '</span><button class="dots" onclick="event.stopPropagation();window.showDrop(\'a' + a.id + '\')">⋮</button><div class="dropdown" id="da' + a.id + '"><button class="drop-btn" onclick="window.openArtInBuilder(\'' + a.id + '\')">👁️ Open</button><button class="drop-btn" onclick="window.editArt(\'' + a.id + '\')">✏️ Edit Name</button><button class="drop-btn" onclick="window.dlArt(\'' + a.id + '\')">📥 Download</button><button class="drop-btn" onclick="window.delArt(\'' + a.id + '\')">🗑️ Delete</button></div></div>';
+            }).join('') || '<div style="padding:8px;font-size:12px;opacity:0.6;">No artifacts</div>';
+            document.getElementById('artifacts').innerHTML = html;
+        }
+        
+        window.openArtInBuilder = function(id) {
+            const art = artifactsData[id];
+            if (!art) return;
+            
+            openAgent();
+            appCode = art.content;
+            
+            setTimeout(function() {
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + art.content.replace(/"/g, '&quot;') + '"></iframe>';
+                document.getElementById('dlApp').style.display = 'block';
+                
+                const msgs = document.getElementById('builderMsgs');
+                msgs.innerHTML = '<div class="msg ai"><div class="label">FEREN AI</div><div class="text">📱 Loaded: <strong>' + art.title + '</strong><br><em style="font-size:12px;color:#6b7280;">You can now improve it!</em></div></div>';
+            }, 100);
+            
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.editArt = function(id) {
+            const name = prompt('New name:', artifactsData[id].title);
+            if (name) {
+                artifactsData[id].title = name;
+                localStorage.setItem('artifacts', JSON.stringify(artifactsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.dlArt = function(id) {
+            const a = artifactsData[id];
+            if (a) {
+                const blob = new Blob([a.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = a.title.replace(/\s/g, '-') + '.html';
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.delArt = function(id) {
+            if (confirm('Delete artifact?')) {
+                delete artifactsData[id];
+                localStorage.setItem('artifacts', JSON.stringify(artifactsData));
+                updateAll();
+            }
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+        };
+        
+        window.showDrop = function(id) {
+            document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            const elem = document.getElementById('d' + id);
+            if (elem) elem.classList.add('show');
+        };
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.item')) {
+                document.querySelectorAll('.dropdown').forEach(function(d) { d.classList.remove('show'); });
+            }
+        });
+        
+        window.openAgent = function() {
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('builderView').style.display = 'flex';
+            document.getElementById('agentBtn').classList.add('active');
+        };
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageData = e.target.result;
+                uploadedImage = file.name;
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imagePreview').classList.add('show');
+                document.getElementById('uploadArea').classList.add('has-image');
+                document.getElementById('removeImg').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            uploadedImage = null;
+            uploadedImageData = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('uploadArea').classList.remove('has-image');
+            document.getElementById('removeImg').style.display = 'none';
+            document.getElementById('imageInput').value = '';
+        }
+        
+        window.buildApp = async function() {
+            const inp = document.getElementById('builderInp');
+            const text = inp.value.trim();
+            
+            if (!api) { openModal('settings'); return; }
+            if (!text && !uploadedImage) { alert('Describe app or upload image'); return; }
+            
+            const msgs = document.getElementById('builderMsgs');
+            
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg user';
+            let userContent = '<div class="label">YOU</div><div class="text">' + (text || 'Analyze image') + '</div>';
+            if (uploadedImageData) {
+                userContent += '<img src="' + uploadedImageData + '" style="max-width:100%;border-radius:8px;margin-top:8px;">';
+            }
+            userDiv.innerHTML = userContent;
+            msgs.appendChild(userDiv);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            inp.value = '';
+            
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'msg ai';
+            aiDiv.id = 'building';
+            aiDiv.innerHTML = '<div class="label">FEREN AI</div><div class="text">🔍 Building your app...</div>';
+            msgs.appendChild(aiDiv);
+            msgs.scrollTop = msgs.scrollHeight;
+            
+            try {
+                let messageContent = 'Create HTML app: ' + text + '\n\nGREEN theme (#10b981), fully functional, single file. Return ONLY HTML.';
+                
+                let messages = [];
+                if (uploadedImageData) {
+                    const base64 = uploadedImageData.split(',')[1];
+                    const mediaType = uploadedImageData.split(';')[0].split(':')[1];
+                    messages = [{
+                        role: 'user',
+                        content: [
+                            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 }},
+                            { type: 'text', text: messageContent }
+                        ]
+                    }];
+                } else {
+                    messages = [{ role: 'user', content: messageContent }];
+                }
+                
+                const data = await callAnthropicAPI(messages, 4096);
+                
+                if (data.error) {
+                    document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text">❌ Error: ' + (data.error.message || JSON.stringify(data.error)) + '</div>';
+                    return;
+                }
+                
+                let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
+                
+                appCode = code;
+                
+                const artId = 'app' + Date.now();
+                artifactsData[artId] = {
+                    id: artId,
+                    type: 'html',
+                    title: text.substring(0, 40),
+                    content: code,
+                    created: Date.now()
+                };
+                localStorage.setItem('artifacts', JSON.stringify(artifactsData));
+                updateAll();
+                
+                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text"><div style="color:#065f46;font-weight:600;margin-bottom:8px;">✨ Built Successfully!</div></div>';
+                
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + code.replace(/"/g, '&quot;') + '"></iframe>';
+                document.getElementById('dlApp').style.display = 'block';
+                
+                removeImage();
+                
+            } catch (e) {
+                document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text">❌ Error: ' + e.message + '</div>';
+            }
+        };
+        
+        window.showPreview = function() {
+            document.getElementById('previewTab').classList.add('active');
+            document.getElementById('codeTab').classList.remove('active');
+            if (appCode) {
+                document.getElementById('preview').innerHTML = '<iframe class="frame" srcdoc="' + appCode.replace(/"/g, '&quot;') + '"></iframe>';
+            }
+        };
+        
+        window.showCode = function() {
+            document.getElementById('codeTab').classList.add('active');
+            document.getElementById('previewTab').classList.remove('active');
+            if (appCode) {
+                const escaped = appCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                document.getElementById('preview').innerHTML = '<div style="padding:20px;background:#1e293b;color:#e2e8f0;font-family:monospace;font-size:12px;overflow-y:scroll;height:100%;white-space:pre-wrap;">' + escaped + '</div>';
+            }
+        };
+        
+        window.dlApp = function() {
+            if (!appCode) return;
+            const blob = new Blob([appCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'feren-app-' + Date.now() + '.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        window.init();
+    </script>
+</body>
+</html>
