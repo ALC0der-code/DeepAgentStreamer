@@ -1,0 +1,11 @@
+{
+  "name": "feren-ai",
+  "version": "1.0.0",
+  "description": "AI-powered chat and app builder",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
