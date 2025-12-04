@@ -659,7 +659,10 @@
             <div class="modal-title">⚙️ Settings</div>
             <label style="display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:#374151;">Anthropic API Key</label>
             <input type="password" id="apiKey" class="form-input" placeholder="sk-ant-api03-...">
-            <div class="modal-btns">
+            <div style="padding:10px;background:#ecfdf5;border:1px solid #d1fae5;border-radius:6px;font-size:11px;color:#065f46;">
+                ✅ API endpoint auto-configured
+            </div>
+            <div class="modal-btns" style="margin-top:16px;">
                 <button class="btn btn-secondary" onclick="window.closeModal('settings')">Cancel</button>
                 <button class="btn btn-primary" onclick="window.saveSettings()">Save</button>
             </div>
@@ -802,6 +805,11 @@
         let globalModelName = localStorage.getItem('globalModelName') || 'Claude Sonnet 4.5';
         let promptModel = 'sonnet';
         
+        // Auto-detect API endpoint (works on localhost and production)
+        const API_ENDPOINT = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api/anthropic'
+            : window.location.origin + '/api/anthropic';
+        
         window.init = function() {
             document.getElementById('modelName').textContent = globalModelName;
             updateAll();
@@ -871,6 +879,23 @@
                 'haiku': 'claude-haiku-4-20250514'
             };
             return modelMap[promptModel] || globalModel;
+        }
+
+        async function callAnthropicAPI(messages, max_tokens) {
+            const modelToUse = getModelForRequest();
+            
+            const res = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    apiKey: api,
+                    model: modelToUse,
+                    messages: messages,
+                    max_tokens: max_tokens
+                })
+            });
+            
+            return await res.json();
         }
         
         window.createProject = function() {
@@ -979,37 +1004,25 @@
             btn.disabled = true;
             btn.textContent = '...';
             
-            const modelToUse = getModelForRequest();
-            
             try {
-                const res = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': api,
-                        'anthropic-version': '2023-06-01'
-                    },
-                    body: JSON.stringify({
-                        model: modelToUse,
-                        messages: [{ role: 'user', content: text }],
-                        max_tokens: 2048
-                    })
-                });
+                const data = await callAnthropicAPI([{ role: 'user', content: text }], 2048);
                 
-                const data = await res.json();
-                const reply = data.content[0].text;
-                
-                if (data.usage) {
-                    usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
-                    usage.calls++;
-                    usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
-                    localStorage.setItem('usage', JSON.stringify(usage));
-                    updateAll();
+                if (data.error) {
+                    addMsg('assistant', 'Error: ' + (data.error.message || JSON.stringify(data.error)));
+                } else {
+                    const reply = data.content[0].text;
+                    
+                    if (data.usage) {
+                        usage.tokens += (data.usage.input_tokens + data.usage.output_tokens);
+                        usage.calls++;
+                        usage.cost += (data.usage.input_tokens * 3 + data.usage.output_tokens * 15) / 1000000;
+                        localStorage.setItem('usage', JSON.stringify(usage));
+                        updateAll();
+                    }
+                    
+                    addMsg('assistant', reply);
+                    switchPromptModel('sonnet');
                 }
-                
-                addMsg('assistant', reply);
-                switchPromptModel('sonnet');
-                
             } catch (e) {
                 addMsg('assistant', 'Error: ' + e.message);
             }
@@ -1207,21 +1220,13 @@
                     messages = [{ role: 'user', content: messageContent }];
                 }
                 
-                const res = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': api,
-                        'anthropic-version': '2023-06-01'
-                    },
-                    body: JSON.stringify({
-                        model: globalModel,
-                        messages: messages,
-                        max_tokens: 4096
-                    })
-                });
+                const data = await callAnthropicAPI(messages, 4096);
                 
-                const data = await res.json();
+                if (data.error) {
+                    document.getElementById('building').innerHTML = '<div class="label">FEREN AI</div><div class="text">❌ Error: ' + (data.error.message || JSON.stringify(data.error)) + '</div>';
+                    return;
+                }
+                
                 let code = data.content[0].text.replace(/```html/g, '').replace(/```/g, '').trim();
                 
                 appCode = code;
