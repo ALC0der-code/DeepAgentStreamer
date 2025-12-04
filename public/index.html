@@ -187,6 +187,8 @@
             display: flex;
             flex-direction: column;
             min-width: 0;
+            min-height: 0;
+            height: 100%;
         }
 
         .artifact-panel {
@@ -295,11 +297,11 @@
         
         .messages {
             flex: 1;
-            overflow-y: auto !important;
+            overflow-y: scroll;
             overflow-x: hidden;
             padding: 30px 20px;
             scroll-behavior: smooth;
-            max-height: 100%;
+            min-height: 0;
         }
         
         .msg {
@@ -534,6 +536,7 @@
         .builder {
             display: flex;
             height: 100%;
+            min-height: 0;
         }
         
         .builder-chat {
@@ -542,14 +545,15 @@
             border-right: 1px solid #e5e7eb;
             display: flex;
             flex-direction: column;
+            min-height: 0;
         }
         
         .builder-msgs {
             flex: 1;
-            overflow-y: auto !important;
+            overflow-y: scroll;
             overflow-x: hidden;
             padding: 20px;
-            max-height: 100%;
+            min-height: 0;
         }
         
         .builder-input {
@@ -561,6 +565,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            min-height: 0;
             overflow: hidden;
         }
 
@@ -721,6 +726,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: 0;
         }
         
         .preview-header {
